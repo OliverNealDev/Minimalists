@@ -2,15 +2,18 @@ using UnityEngine;
 
 public class faceCamera : MonoBehaviour
 {
-    private Camera _camera;
+    private Camera mainCamera;
 
     void Start()
     {
-        _camera = Camera.main;
+        mainCamera = Camera.main;
     }
-    
-    void Update()
+
+    // Use LateUpdate to ensure the camera has finished its movement for the frame.
+    void LateUpdate()
     {
-        transform.LookAt(-_camera.transform.position, Vector3.up);
+        // This makes the object's orientation perfectly match the camera's.
+        // It is the most robust way to make UI or sprites face the camera.
+        transform.rotation = mainCamera.transform.rotation;
     }
 }

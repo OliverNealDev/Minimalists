@@ -33,12 +33,14 @@ public class ConstructController : MonoBehaviour
             }
         }
         visuals.UpdateUnitCount(Mathf.FloorToInt(UnitCount));
+        visuals.UpdateUnitCapacity(UnitCount, constructData.maxUnitCapacity);
     }
     
     public void SetInitialOwner(FactionData newOwner)
     {
         Owner = newOwner;
         UnitCount = 10;
+        visuals.UpdateUnitCapacity(UnitCount, constructData.maxUnitCapacity);
         visuals.UpdateColor(newOwner.factionColor);
     }
     
@@ -67,6 +69,7 @@ public class ConstructController : MonoBehaviour
             Vector3 spawnPosition = new Vector3(transform.position.x, 0.18125f, transform.position.z);
             GameObject unit = Instantiate(unitPrefab, spawnPosition, Quaternion.identity);
             UnitCount--;
+            visuals.UpdateUnitCapacity(UnitCount, constructData.maxUnitCapacity);
             
             UnitController unitController = unit.GetComponent<UnitController>();
             if (unitController != null)
@@ -83,6 +86,7 @@ public class ConstructController : MonoBehaviour
         if (unitOwner == Owner)
         {
             UnitCount++;
+            visuals.UpdateUnitCapacity(UnitCount, constructData.maxUnitCapacity);
         }
         else
         {
@@ -91,6 +95,7 @@ public class ConstructController : MonoBehaviour
             {
                 Owner = unitOwner;
                 UnitCount += 2;
+                visuals.UpdateUnitCapacity(UnitCount, constructData.maxUnitCapacity);
                 visuals.UpdateColor(Owner.factionColor);
             }
         }

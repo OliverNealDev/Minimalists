@@ -6,7 +6,6 @@ public class CameraController : MonoBehaviour
     [Header("Movement Settings")]
     public float dragSpeed = 2f;
     public float moveSpeed = 15f; // Speed for WASD movement
-    public float moveLerpSpeed = 15f; // How quickly WASD movement accelerates and decelerates
     public LayerMask groundLayer;
     [Tooltip("How much faster the drag/WASD is when fully zoomed out.")]
     public float zoomMoveMultiplier = 4.0f;
@@ -26,7 +25,6 @@ public class CameraController : MonoBehaviour
     private float currentRotationY = 0f;
     private float targetOrthographicSize = 0f;
     private Vector3 lastMousePosition;
-    private Vector3 currentWASDVelocity;
 
     void Awake()
     {
@@ -83,21 +81,22 @@ public class CameraController : MonoBehaviour
     
     private void HandleWASDMovement()
     {
-        float horizontalInput = Input.GetAxis("Horizontal");
-        float verticalInput = Input.GetAxis("Vertical");
+        float horizontalInput = Input.GetAxisRaw("Horizontal");
+        float verticalInput = Input.GetAxisRaw("Vertical");
+
+        if (horizontalInput == 0f && verticalInput == 0f)
+        {
+            return;
+        }
 
         Vector3 right = Vector3.ProjectOnPlane(transform.right, Vector3.up).normalized;
         Vector3 forward = Vector3.ProjectOnPlane(transform.forward, Vector3.up).normalized;
-        Vector3 targetDirection = (right * horizontalInput + forward * verticalInput);
+        Vector3 moveDirection = (right * horizontalInput + forward * verticalInput).normalized;
 
         float zoomRatio = (mainCamera.orthographicSize - minOrthographicSize) / (maxOrthographicSize - minOrthographicSize);
         float dynamicSpeed = Mathf.Lerp(moveSpeed, moveSpeed * zoomMoveMultiplier, zoomRatio);
         
-        Vector3 targetVelocity = targetDirection * dynamicSpeed;
-
-        currentWASDVelocity = Vector3.Lerp(currentWASDVelocity, targetVelocity, Time.deltaTime * moveLerpSpeed);
-        
-        transform.position += currentWASDVelocity * Time.deltaTime;
+        transform.position += moveDirection * dynamicSpeed * Time.deltaTime;
     }
 
     private void HandleDragMovement()
