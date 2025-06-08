@@ -17,6 +17,8 @@ public class ConstructController : MonoBehaviour
     private ConstructData currentConstructData;
     public ConstructVisuals visuals;
     private float unitGenerationBuffer = 0f;
+    
+    private bool isMouseOver = false;
 
     void Awake()
     {
@@ -121,7 +123,8 @@ public class ConstructController : MonoBehaviour
                 {
                     currentConstructData = initialClaimedData;
                 }
-                
+
+                if (isMouseOver) OnMouseEnter();
                 visuals.UpdateColor(Owner.factionColor);
                 UpdateVisualsForOwner();
             }
@@ -169,6 +172,11 @@ public class ConstructController : MonoBehaviour
             visuals.UpdateSelectionColor(Color.white);
             visuals.UpdateSelection(true);
         }
+        else if (isMouseOver)
+        {
+            visuals.UpdateSelectionColor(Color.grey);
+            visuals.UpdateSelection(true);
+        }
         else
         {
             visuals.UpdateSelection(false);
@@ -177,6 +185,8 @@ public class ConstructController : MonoBehaviour
 
     private void OnMouseEnter()
     {
+        isMouseOver = true;
+        
         if (Owner.factionName == "Player")
         {
             if (InputManager.Instance.IsSelecting)
@@ -200,13 +210,10 @@ public class ConstructController : MonoBehaviour
         }
     }
 
-    private void OnMouseOver()
-    {
-        
-    }
-
     private void OnMouseExit()
     {
+        isMouseOver = false;
+        
         if (!InputManager.Instance.IsSelecting || (InputManager.Instance.IsSelecting && InputManager.Instance.startNode != this))
         {
             visuals.UpdateSelection(false);
