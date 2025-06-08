@@ -1,22 +1,45 @@
-// In Scripts/Input/InputManager.cs
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class InputManager : MonoBehaviour
 {
-    private Camera mainCamera;
-    private ConstructController startNode;
+    public static InputManager Instance;
+    
     public LayerMask constructLayer;
+    public float doubleClickThreshold = 0.25f;
 
+    private Camera mainCamera;
+    public ConstructController startNode;
+    private ConstructController lastClickedNode;
+    private float lastClickTime;
+    
+    public bool IsSelecting => startNode != null;
+    
     void Start()
     {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        else
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
         mainCamera = Camera.main;
     }
 
     void Update()
     {
+        /*if (EventSystem.current.IsPointerOverGameObject())
+        {
+            return;
+        }*/
+
         if (Input.GetMouseButtonDown(0))
         {
-            HandleSelectionStart();
+            HandleClick();
         }
 
         if (Input.GetMouseButtonUp(0))
@@ -25,23 +48,40 @@ public class InputManager : MonoBehaviour
         }
     }
 
-    private void HandleSelectionStart()
+    private void HandleClick()
     {
         RaycastHit hit;
         Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
 
         if (Physics.Raycast(ray, out hit, Mathf.Infinity, constructLayer))
         {
-            ConstructController controller = hit.collider.GetComponent<ConstructController>();
-            // Only select if it's a player-owned node
-            if (controller != null && controller.Owner == GameManager.Instance.playerFaction)
+            ConstructController clickedNode = hit.collider.GetComponent<ConstructController>();
+            if (clickedNode == null || clickedNode.Owner != GameManager.Instance.playerFaction)
             {
-                startNode = controller;
-                startNode.SetSelected(true); // Visual feedback
+                return;
+            }
+
+            if (Time.time - lastClickTime < doubleClickThreshold && lastClickedNode == clickedNode)
+            {
+                clickedNode.AttemptUpgrade();
+                Debug.Log("Double-click detected on node: " + clickedNode.name);
+                ResetClickState();
+            }
+            else
+            {
+                HandleSelectionStart(clickedNode);
             }
         }
     }
-    
+
+    private void HandleSelectionStart(ConstructController clickedNode)
+    {
+        lastClickTime = Time.time;
+        lastClickedNode = clickedNode;
+        startNode = clickedNode;
+        startNode.SetSelected(true);
+    }
+
     private void HandleSelectionEnd()
     {
         if (startNode == null) return;
@@ -54,12 +94,19 @@ public class InputManager : MonoBehaviour
             ConstructController endNode = hit.collider.GetComponent<ConstructController>();
             if (endNode != null && endNode != startNode)
             {
-                // Send 50% on a simple click, could add more logic for percentages
+                endNode.SetSelected(false);
                 startNode.SendUnits(endNode, 0.5f);
             }
         }
         
-        startNode.SetSelected(false); // Deselect visual
+        startNode.SetSelected(false);
+        ResetClickState();
+    }
+
+    private void ResetClickState()
+    {
         startNode = null;
+        lastClickedNode = null;
+        lastClickTime = 0;
     }
 }

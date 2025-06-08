@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "AIDifficultySettings", menuName = "Scriptable Objects/AIDifficultySettings")]
+[CreateAssetMenu(fileName = "AIDifficultySettings", menuName = "Minimalists/AI/AIDifficultySettings")]
 public class AIDifficultySettings : ScriptableObject
 {
     [Header("Decision Timing")]

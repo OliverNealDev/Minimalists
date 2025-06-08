@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "FactionData", menuName = "Scriptable Objects/FactionData")]
+[CreateAssetMenu(fileName = "FactionData", menuName = "Minimalists/Factions/FactionData")]
 public class FactionData : ScriptableObject
 {
     public string factionName;

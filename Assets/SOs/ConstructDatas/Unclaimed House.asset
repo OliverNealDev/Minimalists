@@ -9,10 +9,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2251dbe3eb6d7f145afa036cf5f81e68, type: 3}
-  m_Name: NodeConstructData
+  m_Script: {fileID: 11500000, guid: 06f6f364acb4db04087954ab5836ac46, type: 3}
+  m_Name: Unclaimed House
   m_EditorClassIdentifier: 
-  constructName: Unclaimed Construct
-  maxUnitCapacity: 20
-  unitsPerSecond: 1
+  constructName: Unclaimed House
   visualPrefab: {fileID: 0}
+  upgradeCost: 0
+  upgradedVersion: {fileID: 0}
+  maxUnitCapacity: 5
+  unitsPerSecond: 0.5

@@ -1,16 +1,22 @@
-using System.Collections;
+using System;
 using UnityEngine;
+using System.Collections;
 
 public class ConstructController : MonoBehaviour
 {
-    public ConstructData constructData;
+    [Header("Setup")]
+    public ConstructData initialUnclaimedData;
+    public ConstructData initialClaimedData;
+
+    [Header("Unit Spawning")]
+    [SerializeField] private GameObject unitPrefab;
+    
     public FactionData Owner { get; private set; }
     public float UnitCount { get; private set; }
-
-    private ConstructVisuals visuals;
+    
+    private ConstructData currentConstructData;
+    public ConstructVisuals visuals;
     private float unitGenerationBuffer = 0f;
-
-    [SerializeField] private GameObject unitPrefab;
 
     void Awake()
     {
@@ -19,11 +25,13 @@ public class ConstructController : MonoBehaviour
 
     void Update()
     {
-        if (Owner != null)
+        if (Owner == null) return;
+
+        if (currentConstructData is HouseData houseData)
         {
-            if (UnitCount < constructData.maxUnitCapacity)
+            if (UnitCount < houseData.maxUnitCapacity)
             {
-                unitGenerationBuffer += constructData.unitsPerSecond * Time.deltaTime;
+                unitGenerationBuffer += houseData.unitsPerSecond * Time.deltaTime;
                 if (unitGenerationBuffer >= 1f)
                 {
                     int wholeUnits = Mathf.FloorToInt(unitGenerationBuffer);
@@ -31,50 +39,63 @@ public class ConstructController : MonoBehaviour
                     unitGenerationBuffer -= wholeUnits;
                 }
             }
+            visuals.UpdateUnitCapacity(UnitCount, houseData.maxUnitCapacity);
         }
+        else if (currentConstructData is TurretData turretData)
+        {
+            // Placeholder for Turret logic (e.g., finding and shooting targets)
+        }
+        else if (currentConstructData is ForgeData forgeData)
+        {
+            // Placeholder for Forge logic (e.g., applying buffs in an area)
+        }
+
         visuals.UpdateUnitCount(Mathf.FloorToInt(UnitCount));
-        visuals.UpdateUnitCapacity(UnitCount, constructData.maxUnitCapacity);
     }
-    
+
     public void SetInitialOwner(FactionData newOwner)
     {
         Owner = newOwner;
-        UnitCount = 10;
-        visuals.UpdateUnitCapacity(UnitCount, constructData.maxUnitCapacity);
+        if (Owner.factionName == "Unclaimed")
+        {
+            UnitCount = 5;
+            currentConstructData = initialUnclaimedData;
+        }
+        else
+        {
+            UnitCount = 10;
+            currentConstructData = initialClaimedData;
+        }
+        
         visuals.UpdateColor(newOwner.factionColor);
+        UpdateVisualsForOwner();
     }
-    
+
     public void SendUnits(ConstructController target, float percentage)
     {
         int unitsToSend = Mathf.FloorToInt(UnitCount * percentage);
-        if (unitsToSend > 0)
+        if (unitsToSend > 0 && currentConstructData is HouseData)
         {
-            Debug.Log($"Sending {unitsToSend} units from {name} to {target.name}");
             StartCoroutine(SpawnUnitsRoutine(unitsToSend, target));
         }
     }
-    
+
     private IEnumerator SpawnUnitsRoutine(int count, ConstructController target)
     {
         float spawnDelay = 1f / 4f;
 
         for (int i = 0; i < count; i++)
         {
-            if (UnitCount <= 0) 
-            {
-                Debug.LogWarning("No units left to send.");
-                yield break;
-            }
+            if (UnitCount <= 0) yield break;
             
+            UnitCount--;
             Vector3 spawnPosition = new Vector3(transform.position.x, 0.18125f, transform.position.z);
             GameObject unit = Instantiate(unitPrefab, spawnPosition, Quaternion.identity);
-            UnitCount--;
-            visuals.UpdateUnitCapacity(UnitCount, constructData.maxUnitCapacity);
             
             UnitController unitController = unit.GetComponent<UnitController>();
             if (unitController != null)
             {
-                unitController.Initialize(Owner, this.GetComponent<ConstructController>(), target);
+                unitController.Initialize(Owner, this, target);
             }
             
             yield return new WaitForSeconds(spawnDelay);
@@ -86,23 +107,109 @@ public class ConstructController : MonoBehaviour
         if (unitOwner == Owner)
         {
             UnitCount++;
-            visuals.UpdateUnitCapacity(UnitCount, constructData.maxUnitCapacity);
         }
         else
         {
             UnitCount--;
             if (UnitCount < 0)
             {
+                bool wasUnclaimed = Owner.factionName == "Unclaimed";
                 Owner = unitOwner;
-                UnitCount += 2;
-                visuals.UpdateUnitCapacity(UnitCount, constructData.maxUnitCapacity);
+                UnitCount = 1;
+
+                if (wasUnclaimed)
+                {
+                    currentConstructData = initialClaimedData;
+                }
+                
                 visuals.UpdateColor(Owner.factionColor);
+                UpdateVisualsForOwner();
             }
         }
     }
+
+    public void AttemptUpgrade()
+    {
+        if (currentConstructData.upgradedVersion == null)
+        {
+            Debug.Log("This construct is at its maximum level.");
+            return;
+        }
+
+        if (UnitCount >= currentConstructData.upgradeCost)
+        {
+            UnitCount -= currentConstructData.upgradeCost;
+            currentConstructData = currentConstructData.upgradedVersion;
+            
+            // Here you could trigger a visual effect for the upgrade
+            Debug.Log($"{name} has been upgraded to {currentConstructData.name}!");
+        }
+        else
+        {
+            Debug.Log("Not enough units to upgrade.");
+        }
+    }
     
+    private void UpdateVisualsForOwner()
+    {
+        if (Owner.factionName == "Player" || Owner.factionName == "Unclaimed")
+        {
+            visuals.ShowVisuals();
+        }
+        else
+        {
+            visuals.HideVisuals();
+        }
+    }
+
     public void SetSelected(bool isSelected)
     {
-        visuals.UpdateSelection(isSelected);
+        if (isSelected)
+        {
+            visuals.UpdateSelectionColor(Color.white);
+            visuals.UpdateSelection(true);
+        }
+        else
+        {
+            visuals.UpdateSelection(false);
+        }
+    }
+
+    private void OnMouseEnter()
+    {
+        if (Owner.factionName == "Player")
+        {
+            if (InputManager.Instance.IsSelecting)
+            {
+                if (InputManager.Instance.startNode != this)
+                {
+                    visuals.UpdateSelectionColor(Color.green);
+                    visuals.UpdateSelection(true);
+                }
+            }
+            else
+            {
+                visuals.UpdateSelectionColor(Color.grey);
+                visuals.UpdateSelection(true);
+            }
+        }
+        else if (InputManager.Instance.IsSelecting)
+        {
+            visuals.UpdateSelectionColor(Color.red);
+            visuals.UpdateSelection(true);
+        }
+    }
+
+    private void OnMouseOver()
+    {
+        
+    }
+
+    private void OnMouseExit()
+    {
+        if (!InputManager.Instance.IsSelecting || (InputManager.Instance.IsSelecting && InputManager.Instance.startNode != this))
+        {
+            visuals.UpdateSelection(false);
+        }
     }
 }

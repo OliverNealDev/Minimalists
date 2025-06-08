@@ -1,10 +1,13 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "ConstructData", menuName = "Scriptable Objects/ConstructData")]
-public class ConstructData : ScriptableObject
+// This is the base class. It can't be created on its own.
+public abstract class ConstructData : ScriptableObject
 {
+    [Header("Common Data")]
     public string constructName;
-    public int maxUnitCapacity = 50;
-    public float unitsPerSecond = 1.0f;
     public GameObject visualPrefab;
+
+    [Header("Common Upgrade Settings")]
+    public int upgradeCost = 50;
+    public ConstructData upgradedVersion;
 }

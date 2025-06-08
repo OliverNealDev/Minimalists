@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour
     public GameState currentState;
 
     public List<ConstructController> allConstructs;
+    public FactionData unclaimedFaction;
     public FactionData playerFaction;
     public FactionData aiFaction;
     public FactionData ai2Faction;
@@ -39,6 +40,14 @@ public class GameManager : MonoBehaviour
         
         ConstructController ai2StartNode = allConstructs[2];
         ai2StartNode.SetInitialOwner(ai2Faction);
+        
+        foreach (ConstructController construct in allConstructs)
+        {
+            if (construct.Owner == null)
+            {
+                construct.SetInitialOwner(unclaimedFaction);
+            }
+        }
     }
 
     void Update()
