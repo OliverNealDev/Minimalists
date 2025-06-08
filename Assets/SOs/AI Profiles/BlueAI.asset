@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28d226436996f8b478b6c22e219daf38, type: 3}
   m_Name: BlueAI
   m_EditorClassIdentifier: 
-  decisionCooldown: 2
+  decisionCooldown: 5
   aggressionChance: 0.25
   proximityWeight: 1
   reinforceThreshold: 30
