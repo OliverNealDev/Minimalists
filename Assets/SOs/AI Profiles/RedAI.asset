@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28d226436996f8b478b6c22e219daf38, type: 3}
   m_Name: RedAI
   m_EditorClassIdentifier: 
-  decisionCooldown: 5
+  decisionCooldown: 3
   aggressionChance: 0.75
   proximityWeight: 1.5
   reinforceThreshold: 15
-  attackAdvantageMargin: 2
+  attackAdvantageMargin: 5

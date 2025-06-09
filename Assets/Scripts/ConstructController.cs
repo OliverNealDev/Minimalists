@@ -140,6 +140,7 @@ public class ConstructController : MonoBehaviour
                 break;
         }
         
+        InvokeRepeating("checkUpgradeIndicator", 0.05f, 0.05f);
     }
 
     void Update()
@@ -292,6 +293,20 @@ public class ConstructController : MonoBehaviour
         else
         {
             visuals.UpdateSelection(false);
+        }
+    }
+    
+    private void checkUpgradeIndicator()
+    {
+        if (currentConstructData.upgradedVersion != null && !visuals.isUpgradeIndicatorVisible && UnitCount >= currentConstructData.upgradeCost && Owner.factionName == "Player")
+        {
+            visuals.setUpgradeIndicatorVisibility(true);
+            Debug.Log("Upgrade indicator is now visible for " + currentConstructData.constructName);
+        }
+        else if (currentConstructData.upgradedVersion != null && visuals.isUpgradeIndicatorVisible && UnitCount < currentConstructData.upgradeCost && Owner.factionName == "Player")
+        {
+            visuals.setUpgradeIndicatorVisibility(false);
+            Debug.Log("Upgrade indicator is now hidden for " + currentConstructData.constructName);
         }
     }
 

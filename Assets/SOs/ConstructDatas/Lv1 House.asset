@@ -17,5 +17,6 @@ MonoBehaviour:
   upgradeCost: 5
   upgradeTime: 4
   upgradedVersion: {fileID: 11400000, guid: 17e49bbc1d0b3584b802030673430ad6, type: 2}
-  maxUnitCapacity: 5
+  downgradedVersion: {fileID: 0}
+  maxUnitCapacity: 10
   unitsPerSecond: 0.5

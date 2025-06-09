@@ -14,6 +14,10 @@ public class ConstructVisuals : MonoBehaviour
     [SerializeField] private GameObject selectionIndicator;
     [SerializeField] private Slider unitCapacitySlider;
     [SerializeField] private Image unitCapacityFillImage;
+
+    [SerializeField] private Image upgradeIndicatorImage;
+    public bool isUpgradeIndicatorVisible = false;
+
     
     [SerializeField] private Color selectedColor = Color.green;
     [SerializeField] private Color attackHoverColor = Color.red;
@@ -30,6 +34,7 @@ public class ConstructVisuals : MonoBehaviour
     void Awake()
     {
         SetMeshRenderers();
+        upgradeIndicatorImage.gameObject.SetActive(false);
     }
     
     public void SetMeshRenderers()
@@ -39,6 +44,19 @@ public class ConstructVisuals : MonoBehaviour
         {
             meshRenderers.Add(nodeConstruct.transform.GetChild(i).GetComponent<MeshRenderer>());
         }
+    }
+    
+    public void setUpgradeIndicatorVisibility(bool isVisible)
+    {
+        if (isVisible)
+        {
+            isUpgradeIndicatorVisible = true;
+        }
+        else if (!isVisible)
+        {
+            isUpgradeIndicatorVisible = false;
+        }
+        upgradeIndicatorImage.gameObject.SetActive(isVisible);
     }
     
     public void UpdateColor(Color color)

@@ -47,7 +47,7 @@ public class AIManager : MonoBehaviour
         
         if (!myNodes.Any()) return;
 
-        float upgradeChance = 0.2f;
+        float upgradeChance = 0.4f;
         if (Random.value < upgradeChance)
         {
             if (PerformUpgradeAction(myNodes))
