@@ -32,7 +32,7 @@ public class GameManager : MonoBehaviour
         //spawnConstructs();
         allConstructs = FindObjectsByType<ConstructController>(FindObjectsSortMode.None).ToList();
         
-        ConstructController playerStartNode = allConstructs[0];
+        /*ConstructController playerStartNode = allConstructs[0];
         playerStartNode.SetInitialOwner(playerFaction);
         
         ConstructController aiStartNode = allConstructs[1];
@@ -47,7 +47,7 @@ public class GameManager : MonoBehaviour
             {
                 construct.SetInitialOwner(unclaimedFaction);
             }
-        }
+        }*/
     }
 
     void Update()

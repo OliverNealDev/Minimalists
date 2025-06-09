@@ -15,6 +15,7 @@ MonoBehaviour:
   constructName: Unclaimed House
   visualPrefab: {fileID: 0}
   upgradeCost: 0
+  upgradeTime: 5
   upgradedVersion: {fileID: 0}
-  maxUnitCapacity: 3
-  unitsPerSecond: 0.3
+  maxUnitCapacity: 5
+  unitsPerSecond: 0.5

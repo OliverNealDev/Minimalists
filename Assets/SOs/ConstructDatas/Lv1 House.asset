@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06f6f364acb4db04087954ab5836ac46, type: 3}
   m_Name: Lv1 House
   m_EditorClassIdentifier: 
-  constructName: Lv1 House
-  visualPrefab: {fileID: 0}
+  constructName: House1
+  visualPrefab: {fileID: 1368772909368419100, guid: 2a22367eba66cb54697ed0399622f8dc, type: 3}
   upgradeCost: 5
   upgradeTime: 4
   upgradedVersion: {fileID: 11400000, guid: 17e49bbc1d0b3584b802030673430ad6, type: 2}

@@ -2,10 +2,14 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using System.Collections;
+using System.Collections.Generic;
+using NUnit.Framework;
+using Unity.VisualScripting;
 
 public class ConstructVisuals : MonoBehaviour
 {
-    [SerializeField] private MeshRenderer meshRenderer;
+    [SerializeField] private List<MeshRenderer> meshRenderers = new List<MeshRenderer>();
+    
     [SerializeField] private TextMeshProUGUI unitCountText;
     [SerializeField] private GameObject selectionIndicator;
     [SerializeField] private Slider unitCapacitySlider;
@@ -19,15 +23,31 @@ public class ConstructVisuals : MonoBehaviour
     [SerializeField] private GameObject house1Model;
     [SerializeField] private GameObject house2Model;
     [SerializeField] private GameObject house3Model;
+    [SerializeField] private GameObject house4Model;
+    
+    private Color lastKnownColor;
 
-    public void SetMeshRenderer(MeshRenderer renderer)
+    void Awake()
     {
-        meshRenderer = renderer;
+        SetMeshRenderers();
+    }
+    
+    public void SetMeshRenderers()
+    {
+        meshRenderers.Clear();
+        for (int i = 0; i < nodeConstruct.transform.childCount; i++)
+        {
+            meshRenderers.Add(nodeConstruct.transform.GetChild(i).GetComponent<MeshRenderer>());
+        }
     }
     
     public void UpdateColor(Color color)
     {
-        meshRenderer.material.color = color;
+        lastKnownColor = color;
+        foreach (var renderer in meshRenderers)
+        {
+            renderer.material.color = color;
+        }
     }
 
     public void UpdateUnitCount(int count)
@@ -64,13 +84,35 @@ public class ConstructVisuals : MonoBehaviour
         unitCapacitySlider.gameObject.SetActive(true);
     }
     
-    public void UpgradeScale(float time, float scale)
+    public void UpgradeScale(float time, string constructName)
     {
-        StartCoroutine(AnimateScale(time, scale));
+        StartCoroutine(AnimateScale(time, constructName));
+    }
+    
+    public void ConstructChange(ConstructData constructData, bool isAnimated)
+    {
+        if (isAnimated)
+        {
+            StartCoroutine(AnimateConstructChange(constructData));
+        }
+        else
+        {
+            ChangeConstruct(constructData);
+        }
     }
 
-    private IEnumerator AnimateScale(float duration, float scaleIncrease)
+    void ChangeConstruct(ConstructData constructData)
     {
+        Destroy(nodeConstruct);
+        nodeConstruct = Instantiate(constructData.visualPrefab, transform.position, Quaternion.identity);
+        nodeConstruct.transform.parent = transform;
+        SetMeshRenderers();
+        UpdateColor(lastKnownColor);
+    }
+
+    private IEnumerator AnimateScale(float duration, string constructName)
+    {
+        var scaleIncrease = 0.25f;
         Vector3 initialScale = nodeConstruct.transform.localScale;
         Vector3 finalScale = initialScale + new Vector3(scaleIncrease, scaleIncrease, scaleIncrease);
         float elapsedTime = 0f;
@@ -98,14 +140,77 @@ public class ConstructVisuals : MonoBehaviour
             yield return null;
         }
 
+        switch (constructName)
+        {
+            case "House1":
+                Destroy(nodeConstruct);
+                nodeConstruct = Instantiate(house2Model, transform.position, Quaternion.identity);
+                nodeConstruct.transform.parent = transform;
+                break;
+            case "House2":
+                Destroy(nodeConstruct);
+                nodeConstruct = Instantiate(house3Model, transform.position, Quaternion.identity);
+                nodeConstruct.transform.parent = transform;
+                break;
+            case "House3":
+                Destroy(nodeConstruct);
+                nodeConstruct = Instantiate(house4Model, transform.position, Quaternion.identity);
+                nodeConstruct.transform.parent = transform;
+                break;
+            default:
+                Debug.LogError($"{constructName} is not a valid construct name!");
+                break;
+        }
+        
+        SetMeshRenderers();
+        UpdateColor(lastKnownColor);
+
         elapsedTime = 0f;
         while (elapsedTime < growTime)
         {
-            nodeConstruct.transform.localScale = Vector3.Lerp(Vector3.zero, finalScale, elapsedTime / growTime);
+            nodeConstruct.transform.localScale = Vector3.Lerp(Vector3.zero, initialScale, elapsedTime / growTime);
             elapsedTime += Time.deltaTime;
             yield return null;
         }
 
-        nodeConstruct.transform.localScale = finalScale;
+        nodeConstruct.transform.localScale = initialScale;
+    }
+    
+    private IEnumerator AnimateConstructChange(ConstructData constructData)
+    {
+        var scaleIncrease = 0.25f;
+        Vector3 initialScale = nodeConstruct.transform.localScale;
+        Vector3 finalScale = initialScale + new Vector3(scaleIncrease, scaleIncrease, scaleIncrease);
+        float elapsedTime = 0f;
+        float pulseFrequency = 1.0f;
+        
+        float reformDuration = 0.25f;
+        float shrinkTime = reformDuration / 2.0f;
+        float growTime = reformDuration / 2.0f;
+
+        Vector3 scaleBeforeShrink = nodeConstruct.transform.localScale;
+        elapsedTime = 0f;
+        while (elapsedTime < shrinkTime)
+        {
+            nodeConstruct.transform.localScale = Vector3.Lerp(scaleBeforeShrink, Vector3.zero, elapsedTime / shrinkTime);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        Destroy(nodeConstruct);
+        nodeConstruct = Instantiate(constructData.visualPrefab, transform.position, Quaternion.identity);
+        nodeConstruct.transform.parent = transform;
+        SetMeshRenderers();
+        UpdateColor(lastKnownColor);
+
+        elapsedTime = 0f;
+        while (elapsedTime < growTime)
+        {
+            nodeConstruct.transform.localScale = Vector3.Lerp(Vector3.zero, initialScale, elapsedTime / growTime);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        nodeConstruct.transform.localScale = initialScale;
     }
 }

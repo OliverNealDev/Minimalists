@@ -7,16 +7,28 @@ public class AIManager : MonoBehaviour
 {
     public FactionData aiFaction;
     public AIDifficultySettings difficulty;
+    private float timeSinceLastAction = 0f;
 
     void Start()
     {
         if (difficulty == null)
         {
-            Debug.LogError("AIManager requires an AIDifficultySettings asset to be assigned.", this);
             this.enabled = false;
             return;
         }
         StartCoroutine(MakeDecisionsRoutine());
+    }
+
+    void Update()
+    {
+        if (GameManager.Instance.currentState != GameManager.GameState.Playing) return;
+        
+        timeSinceLastAction += Time.deltaTime;
+
+        if (timeSinceLastAction > 5f)
+        {
+            ForceIdleAction();
+        }
     }
 
     private IEnumerator MakeDecisionsRoutine()
@@ -33,25 +45,72 @@ public class AIManager : MonoBehaviour
         List<ConstructController> myNodes = GameManager.Instance.allConstructs
             .Where(c => c.Owner == aiFaction).ToList();
         
+        if (!myNodes.Any()) return;
+
+        float upgradeChance = 0.2f;
+        if (Random.value < upgradeChance)
+        {
+            if (PerformUpgradeAction(myNodes))
+            {
+                return;
+            }
+        }
+
         List<ConstructController> vulnerableNodes = myNodes
             .Where(n => n.UnitCount < difficulty.reinforceThreshold).ToList();
 
-        if (Random.value > difficulty.aggressionChance && vulnerableNodes.Any())
+        if (vulnerableNodes.Any() && Random.value > difficulty.aggressionChance)
         {
-            PerformDefensiveAction(myNodes, vulnerableNodes);
+            if (PerformDefensiveAction(myNodes, vulnerableNodes))
+            {
+                return;
+            }
+        }
+        
+        PerformOffensiveAction(myNodes);
+    }
+    
+    private bool PerformUpgradeAction(List<ConstructController> myNodes)
+    {
+        var upgradeableNodes = myNodes
+            .Where(n => n.visuals.GetComponent<ConstructController>().currentConstructData.upgradedVersion != null)
+            .OrderByDescending(n => n.UnitCount)
+            .ToList();
+
+        if (!upgradeableNodes.Any()) return false;
+
+        ConstructController candidate = upgradeableNodes.First();
+        float upgradeCost = candidate.visuals.GetComponent<ConstructController>().currentConstructData.upgradeCost;
+
+        if (candidate.UnitCount >= upgradeCost)
+        {
+            candidate.AttemptUpgrade();
+            timeSinceLastAction = 0f;
+            return true;
         }
         else
         {
-            PerformOffensiveAction(myNodes);
+            ConstructController bestReinforcer = myNodes
+                .Where(n => n != candidate && n.UnitCount > difficulty.reinforceThreshold)
+                .OrderByDescending(n => n.UnitCount)
+                .FirstOrDefault();
+            
+            if (bestReinforcer != null)
+            {
+                bestReinforcer.SendUnits(candidate, 0.5f);
+                timeSinceLastAction = 0f;
+                return true;
+            }
         }
+        return false;
     }
 
-    private void PerformOffensiveAction(List<ConstructController> myNodes)
+    private bool PerformOffensiveAction(List<ConstructController> myNodes)
     {
         List<ConstructController> attackableNodes = GameManager.Instance.allConstructs
             .Where(c => c.Owner != aiFaction).ToList();
 
-        if (!myNodes.Any() || !attackableNodes.Any()) return;
+        if (!myNodes.Any() || !attackableNodes.Any()) return false;
 
         float bestScore = float.MinValue;
         ConstructController bestSourceNode = null;
@@ -81,15 +140,18 @@ public class AIManager : MonoBehaviour
         if (bestSourceNode != null && bestTargetNode != null)
         {
             bestSourceNode.SendUnits(bestTargetNode, 0.75f);
+            timeSinceLastAction = 0f;
+            return true;
         }
+        return false;
     }
 
-    private void PerformDefensiveAction(List<ConstructController> myNodes, List<ConstructController> vulnerableNodes)
+    private bool PerformDefensiveAction(List<ConstructController> myNodes, List<ConstructController> vulnerableNodes)
     {
-        if (myNodes.Count <= 1) return;
+        if (myNodes.Count <= 1 || !vulnerableNodes.Any()) return false;
 
         ConstructController targetNode = vulnerableNodes.OrderBy(n => n.UnitCount).FirstOrDefault();
-        if (targetNode == null) return;
+        if (targetNode == null) return false;
         
         ConstructController bestSourceNode = myNodes
             .Where(n => n != targetNode && n.UnitCount > targetNode.UnitCount)
@@ -99,6 +161,29 @@ public class AIManager : MonoBehaviour
         if (bestSourceNode != null)
         {
             bestSourceNode.SendUnits(targetNode, 0.5f);
+            timeSinceLastAction = 0f;
+            return true;
         }
+        return false;
+    }
+
+    private void ForceIdleAction()
+    {
+        timeSinceLastAction = 0f;
+        
+        List<ConstructController> myNodes = GameManager.Instance.allConstructs
+            .Where(c => c.Owner == aiFaction).ToList();
+
+        if (!myNodes.Any()) return;
+
+        List<ConstructController> vulnerableNodes = myNodes
+            .Where(n => n.UnitCount < difficulty.reinforceThreshold).ToList();
+
+        if (vulnerableNodes.Any())
+        {
+            if(PerformDefensiveAction(myNodes, vulnerableNodes)) return;
+        }
+        
+        PerformOffensiveAction(myNodes);
     }
 }

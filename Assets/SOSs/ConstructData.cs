@@ -11,4 +11,5 @@ public abstract class ConstructData : ScriptableObject
     public int upgradeCost = 50;
     public float upgradeTime = 5f;
     public ConstructData upgradedVersion;
+    public ConstructData downgradedVersion;
 }

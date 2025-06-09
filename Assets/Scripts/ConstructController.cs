@@ -4,9 +4,19 @@ using System.Collections;
 
 public class ConstructController : MonoBehaviour
 {
-    [Header("Setup")]
-    public ConstructData initialUnclaimedData;
-    public ConstructData initialClaimedData;
+    [Header("Construct References")]
+    public HouseData House1Data;
+    public HouseData House2Data;
+    public HouseData House3Data;
+    public HouseData House4Data;
+    public ConstructData Forge1Data;
+    public ConstructData Forge2Data;
+    public ConstructData Forge3Data;
+    public ConstructData Forge4Data;
+    public ConstructData Turret1Data;
+    public ConstructData Turret2Data;
+    public ConstructData Turret3Data;
+    public ConstructData Turret4Data;
 
     [Header("Unit Spawning")]
     [SerializeField] private GameObject unitPrefab;
@@ -14,15 +24,122 @@ public class ConstructController : MonoBehaviour
     public FactionData Owner { get; private set; }
     public float UnitCount { get; private set; }
     
-    private ConstructData currentConstructData;
+    public ConstructData currentConstructData;
     public ConstructVisuals visuals;
     private float unitGenerationBuffer = 0f;
     
     private bool isMouseOver = false;
+    
+    public enum initialOwnerTypes
+    {
+        Unclaimed,
+        Player,
+        AI1,
+        AI2
+    }
+    public initialOwnerTypes initialOwner;
+    public enum initialConstructTypes
+    {
+        House,
+        Turret,
+        Forge
+    }
+    public initialConstructTypes initialConstructType;
+    public enum initialLevelTypes
+    {
+        Level1,
+        Level2,
+        Level3,
+        Level4
+    }
+    public initialLevelTypes initialLevel;
 
     void Awake()
     {
         visuals = GetComponent<ConstructVisuals>();
+    }
+
+    void Start()
+    {
+        switch (initialOwner)
+        {
+            case initialOwnerTypes.Unclaimed:
+                SetInitialOwner(GameManager.Instance.unclaimedFaction);
+                break;
+            case initialOwnerTypes.Player:
+                SetInitialOwner(GameManager.Instance.playerFaction);
+                break;
+            case initialOwnerTypes.AI1:
+                SetInitialOwner(GameManager.Instance.aiFaction);
+                break;
+            case initialOwnerTypes.AI2:
+                SetInitialOwner(GameManager.Instance.ai2Faction);
+                break;
+        }
+        
+        switch (initialConstructType)
+        {
+            case initialConstructTypes.House:
+                switch (initialLevel)
+                {
+                    case initialLevelTypes.Level1:
+                        currentConstructData = House1Data;
+                        UnitCount = House1Data.maxUnitCapacity;
+                        visuals.ConstructChange(currentConstructData, false);
+                        break;
+                    case initialLevelTypes.Level2:
+                        currentConstructData = House2Data;
+                        UnitCount = House2Data.maxUnitCapacity;
+                        visuals.ConstructChange(currentConstructData, false);
+                        break;
+                    case initialLevelTypes.Level3:
+                        currentConstructData = House3Data;
+                        UnitCount = House3Data.maxUnitCapacity;
+                        visuals.ConstructChange(currentConstructData, false);
+                        break;
+                    case initialLevelTypes.Level4:
+                        currentConstructData = House4Data;
+                        UnitCount = House4Data.maxUnitCapacity;
+                        visuals.ConstructChange(currentConstructData, false);
+                        break;
+                }
+                break;
+            case initialConstructTypes.Turret:
+                switch (initialLevel)
+                {
+                    case initialLevelTypes.Level1:
+                        currentConstructData = Turret1Data;
+                        break;
+                    case initialLevelTypes.Level2:
+                        currentConstructData = Turret2Data;
+                        break;
+                    case initialLevelTypes.Level3:
+                        currentConstructData = Turret3Data;
+                        break;
+                    case initialLevelTypes.Level4:
+                        currentConstructData = Turret4Data;
+                        break;
+                }
+                break;
+            case initialConstructTypes.Forge:
+                switch (initialLevel)
+                {
+                    case initialLevelTypes.Level1:
+                        currentConstructData = Forge1Data;
+                        break;
+                    case initialLevelTypes.Level2:
+                        currentConstructData = Forge2Data;
+                        break;
+                    case initialLevelTypes.Level3:
+                        currentConstructData = Forge3Data;
+                        break;
+                    case initialLevelTypes.Level4:
+                        currentConstructData = Forge4Data;
+                        break;
+                }
+                break;
+        }
+        
     }
 
     void Update()
@@ -58,17 +175,6 @@ public class ConstructController : MonoBehaviour
     public void SetInitialOwner(FactionData newOwner)
     {
         Owner = newOwner;
-        if (Owner.factionName == "Unclaimed")
-        {
-            UnitCount = 3; // This should be reading from initialUnclaimedData but errors
-            currentConstructData = initialUnclaimedData;
-        }
-        else
-        {
-            UnitCount = 5;
-            currentConstructData = initialClaimedData;
-        }
-        
         visuals.UpdateColor(newOwner.factionColor);
         UpdateVisualsForOwner();
     }
@@ -91,7 +197,7 @@ public class ConstructController : MonoBehaviour
             if (UnitCount <= 0) yield break;
             
             UnitCount--;
-            Vector3 spawnPosition = new Vector3(transform.position.x, 0.18125f, transform.position.z);
+            Vector3 spawnPosition = new Vector3(transform.position.x, 0.68125f, transform.position.z);
             GameObject unit = Instantiate(unitPrefab, spawnPosition, Quaternion.identity);
             
             UnitController unitController = unit.GetComponent<UnitController>();
@@ -121,7 +227,7 @@ public class ConstructController : MonoBehaviour
 
                 if (wasUnclaimed)
                 {
-                    currentConstructData = initialClaimedData;
+                    //currentConstructData = initialClaimedData;
                 }
 
                 if (isMouseOver) OnMouseEnter();
@@ -143,10 +249,10 @@ public class ConstructController : MonoBehaviour
         {
             UnitCount -= currentConstructData.upgradeCost;
             
-            visuals.UpgradeScale(currentConstructData.upgradeTime, 0.15f);
+            visuals.UpgradeScale(currentConstructData.upgradeTime, currentConstructData.constructName);
             Invoke("UpgradeConstruct", currentConstructData.upgradeTime);
             
-            Debug.Log($"{name} has started the upgrade to {currentConstructData.name}!");
+            Debug.Log($"{name} has started the upgrade to {currentConstructData.constructName}!");
         }
         else
         {

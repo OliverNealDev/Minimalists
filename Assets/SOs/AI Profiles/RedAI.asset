@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   decisionCooldown: 5
   aggressionChance: 0.75
-  proximityWeight: 0.5
+  proximityWeight: 1.5
   reinforceThreshold: 15
-  attackAdvantageMargin: 10
+  attackAdvantageMargin: 2

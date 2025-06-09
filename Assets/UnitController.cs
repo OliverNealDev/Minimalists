@@ -25,7 +25,7 @@ public class UnitController : MonoBehaviour
         if (!isUsingNavMesh)
         {
             transform.position = Vector3.MoveTowards(transform.position, target.transform.position, moveSpeed * Time.deltaTime);
-            transform.position = new Vector3(transform.position.x, 0.18125f, transform.position.z);
+            transform.position = new Vector3(transform.position.x, 0.68125f, transform.position.z);
         }
 
         if (Vector3.Distance(transform.position, target.transform.position) < 0.2f)
