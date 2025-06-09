@@ -735,6 +735,7 @@ MonoBehaviour:
   selectedColor: {r: 0, g: 1, b: 0, a: 1}
   attackHoverColor: {r: 1, g: 0, b: 0, a: 1}
   hoverColor: {r: 1, g: 1, b: 1, a: 1}
+  nodeConstruct: {fileID: 4013862884450978402}
 --- !u!208 &-7082280506509370584
 NavMeshObstacle:
   m_ObjectHideFlags: 0

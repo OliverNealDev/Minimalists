@@ -11,7 +11,7 @@ public class InputManager : MonoBehaviour
     private Camera mainCamera;
     public ConstructController startNode;
     private ConstructController lastClickedNode;
-    private float lastClickTime;
+    private float timeSinceLastClick;
     
     public bool IsSelecting => startNode != null;
     
@@ -32,10 +32,7 @@ public class InputManager : MonoBehaviour
 
     void Update()
     {
-        /*if (EventSystem.current.IsPointerOverGameObject())
-        {
-            return;
-        }*/
+        timeSinceLastClick += Time.deltaTime;
 
         if (Input.GetMouseButtonDown(0))
         {
@@ -61,7 +58,7 @@ public class InputManager : MonoBehaviour
                 return;
             }
 
-            if (Time.time - lastClickTime < doubleClickThreshold && lastClickedNode == clickedNode)
+            if (timeSinceLastClick < doubleClickThreshold && lastClickedNode == clickedNode)
             {
                 clickedNode.AttemptUpgrade();
                 Debug.Log("Double-click detected on node: " + clickedNode.name);
@@ -69,6 +66,7 @@ public class InputManager : MonoBehaviour
             }
             else
             {
+                Debug.Log(timeSinceLastClick);
                 HandleSelectionStart(clickedNode);
             }
         }
@@ -76,7 +74,7 @@ public class InputManager : MonoBehaviour
 
     private void HandleSelectionStart(ConstructController clickedNode)
     {
-        lastClickTime = Time.time;
+        timeSinceLastClick = 0;
         lastClickedNode = clickedNode;
         startNode = clickedNode;
         startNode.SetSelected(true);
@@ -92,11 +90,19 @@ public class InputManager : MonoBehaviour
         if (Physics.Raycast(ray, out hit, 100f, constructLayer))
         {
             ConstructController endNode = hit.collider.GetComponent<ConstructController>();
+            if (endNode == null || endNode != lastClickedNode)
+            {
+                lastClickedNode = null;
+            }
             if (endNode != null && endNode != startNode)
             {
                 endNode.SetSelected(false);
                 startNode.SendUnits(endNode, 0.5f);
             }
+        }
+        else
+        {
+            lastClickedNode = null;
         }
         
         startNode.SetSelected(false);
@@ -106,7 +112,6 @@ public class InputManager : MonoBehaviour
     private void ResetClickState()
     {
         startNode = null;
-        lastClickedNode = null;
-        lastClickTime = 0;
+        timeSinceLastClick = 0;
     }
 }

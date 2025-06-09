@@ -16,5 +16,5 @@ MonoBehaviour:
   visualPrefab: {fileID: 0}
   upgradeCost: 0
   upgradedVersion: {fileID: 0}
-  maxUnitCapacity: 5
-  unitsPerSecond: 0.5
+  maxUnitCapacity: 3
+  unitsPerSecond: 0.3

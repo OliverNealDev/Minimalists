@@ -15,6 +15,7 @@ MonoBehaviour:
   constructName: Lv2 House
   visualPrefab: {fileID: 0}
   upgradeCost: 10
+  upgradeTime: 6
   upgradedVersion: {fileID: 11400000, guid: ab6ea622e48d2b1418549405f9477403, type: 2}
-  maxUnitCapacity: 30
+  maxUnitCapacity: 10
   unitsPerSecond: 0.75

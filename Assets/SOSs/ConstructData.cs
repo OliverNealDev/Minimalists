@@ -9,5 +9,6 @@ public abstract class ConstructData : ScriptableObject
 
     [Header("Common Upgrade Settings")]
     public int upgradeCost = 50;
+    public float upgradeTime = 5f;
     public ConstructData upgradedVersion;
 }

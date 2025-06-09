@@ -60,12 +60,12 @@ public class ConstructController : MonoBehaviour
         Owner = newOwner;
         if (Owner.factionName == "Unclaimed")
         {
-            UnitCount = 5;
+            UnitCount = 3; // This should be reading from initialUnclaimedData but errors
             currentConstructData = initialUnclaimedData;
         }
         else
         {
-            UnitCount = 10;
+            UnitCount = 5;
             currentConstructData = initialClaimedData;
         }
         
@@ -142,15 +142,21 @@ public class ConstructController : MonoBehaviour
         if (UnitCount >= currentConstructData.upgradeCost)
         {
             UnitCount -= currentConstructData.upgradeCost;
-            currentConstructData = currentConstructData.upgradedVersion;
             
-            // Here you could trigger a visual effect for the upgrade
-            Debug.Log($"{name} has been upgraded to {currentConstructData.name}!");
+            visuals.UpgradeScale(currentConstructData.upgradeTime, 0.15f);
+            Invoke("UpgradeConstruct", currentConstructData.upgradeTime);
+            
+            Debug.Log($"{name} has started the upgrade to {currentConstructData.name}!");
         }
         else
         {
             Debug.Log("Not enough units to upgrade.");
         }
+    }
+
+    private void UpgradeConstruct()
+    {
+        currentConstructData = currentConstructData.upgradedVersion;
     }
     
     private void UpdateVisualsForOwner()

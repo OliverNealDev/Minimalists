@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 06f6f364acb4db04087954ab5836ac46, type: 3}
-  m_Name: Lv1 House
+  m_Name: Lv4 House
   m_EditorClassIdentifier: 
-  constructName: Lv1 House
+  constructName: Lv4 House
   visualPrefab: {fileID: 0}
-  upgradeCost: 5
-  upgradeTime: 4
-  upgradedVersion: {fileID: 11400000, guid: 17e49bbc1d0b3584b802030673430ad6, type: 2}
-  maxUnitCapacity: 5
-  unitsPerSecond: 0.5
+  upgradeCost: 0
+  upgradeTime: 0
+  upgradedVersion: {fileID: 0}
+  maxUnitCapacity: 40
+  unitsPerSecond: 1.25
