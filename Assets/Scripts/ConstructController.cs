@@ -25,6 +25,7 @@ public class ConstructController : MonoBehaviour
     public float UnitCount { get; private set; }
     
     public ConstructData currentConstructData;
+    private bool isUpgrading = false;
     public ConstructVisuals visuals;
     private float unitGenerationBuffer = 0f;
     
@@ -139,8 +140,9 @@ public class ConstructController : MonoBehaviour
                 }
                 break;
         }
-        
-        InvokeRepeating("checkUpgradeIndicator", 0.05f, 0.05f);
+
+        checkUpgradeIndicator();
+        //InvokeRepeating("checkUpgradeIndicator", 0.05f, 0.05f);
     }
 
     void Update()
@@ -156,6 +158,7 @@ public class ConstructController : MonoBehaviour
                 {
                     int wholeUnits = Mathf.FloorToInt(unitGenerationBuffer);
                     UnitCount += wholeUnits;
+                    checkUpgradeIndicator();
                     unitGenerationBuffer -= wholeUnits;
                 }
             }
@@ -178,6 +181,7 @@ public class ConstructController : MonoBehaviour
         Owner = newOwner;
         visuals.UpdateColor(newOwner.factionColor);
         UpdateVisualsForOwner();
+        checkUpgradeIndicator();
     }
 
     public void SendUnits(ConstructController target, float percentage)
@@ -198,6 +202,7 @@ public class ConstructController : MonoBehaviour
             if (UnitCount <= 0) yield break;
             
             UnitCount--;
+            checkUpgradeIndicator();
             Vector3 spawnPosition = new Vector3(transform.position.x, 0.68125f, transform.position.z);
             GameObject unit = Instantiate(unitPrefab, spawnPosition, Quaternion.identity);
             
@@ -236,6 +241,8 @@ public class ConstructController : MonoBehaviour
                 UpdateVisualsForOwner();
             }
         }
+        
+        checkUpgradeIndicator();
     }
 
     public void AttemptUpgrade()
@@ -245,6 +252,8 @@ public class ConstructController : MonoBehaviour
             Debug.Log("This construct is at its maximum level.");
             return;
         }
+        
+        if (isUpgrading) return;
 
         if (UnitCount >= currentConstructData.upgradeCost)
         {
@@ -252,6 +261,8 @@ public class ConstructController : MonoBehaviour
             
             visuals.UpgradeScale(currentConstructData.upgradeTime, currentConstructData.constructName);
             Invoke("UpgradeConstruct", currentConstructData.upgradeTime);
+            isUpgrading = true;
+            checkUpgradeIndicator();
             
             Debug.Log($"{name} has started the upgrade to {currentConstructData.constructName}!");
         }
@@ -264,6 +275,7 @@ public class ConstructController : MonoBehaviour
     private void UpgradeConstruct()
     {
         currentConstructData = currentConstructData.upgradedVersion;
+        isUpgrading = false;
     }
     
     private void UpdateVisualsForOwner()
@@ -298,12 +310,22 @@ public class ConstructController : MonoBehaviour
     
     private void checkUpgradeIndicator()
     {
-        if (currentConstructData.upgradedVersion != null && !visuals.isUpgradeIndicatorVisible && UnitCount >= currentConstructData.upgradeCost && Owner.factionName == "Player")
+        if (currentConstructData == null) return;
+        
+        if (currentConstructData.upgradedVersion != null && 
+            !visuals.isUpgradeIndicatorVisible && 
+            UnitCount >= currentConstructData.upgradeCost && 
+            Owner.factionName == "Player" && 
+            !isUpgrading)
         {
             visuals.setUpgradeIndicatorVisibility(true);
             Debug.Log("Upgrade indicator is now visible for " + currentConstructData.constructName);
         }
-        else if (currentConstructData.upgradedVersion != null && visuals.isUpgradeIndicatorVisible && UnitCount < currentConstructData.upgradeCost && Owner.factionName == "Player")
+        else if ((currentConstructData.upgradedVersion != null && 
+                 visuals.isUpgradeIndicatorVisible && 
+                 UnitCount < currentConstructData.upgradeCost && 
+                 Owner.factionName == "Player") || 
+                 isUpgrading)
         {
             visuals.setUpgradeIndicatorVisibility(false);
             Debug.Log("Upgrade indicator is now hidden for " + currentConstructData.constructName);
