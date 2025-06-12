@@ -40,9 +40,9 @@ public class ConstructVisuals : MonoBehaviour
     public void SetMeshRenderers()
     {
         meshRenderers.Clear();
-        for (int i = 0; i < nodeConstruct.transform.childCount; i++)
+        for (int i = 0; i < nodeConstruct.transform.GetChild(0).childCount; i++)
         {
-            meshRenderers.Add(nodeConstruct.transform.GetChild(i).GetComponent<MeshRenderer>());
+            meshRenderers.Add(nodeConstruct.transform.GetChild(0).GetChild(i).GetComponent<MeshRenderer>());
         }
     }
     
