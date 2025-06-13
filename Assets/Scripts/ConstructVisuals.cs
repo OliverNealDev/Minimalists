@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
 using Unity.VisualScripting;
+using UnityEngine.Experimental.Audio;
 
 public class ConstructVisuals : MonoBehaviour
 {
@@ -17,6 +18,9 @@ public class ConstructVisuals : MonoBehaviour
 
     [SerializeField] private Image upgradeIndicatorImage;
     public bool isUpgradeIndicatorVisible = false;
+    private bool isUpgrading = false;
+    
+    private Vector3 originalScale;
 
     
     [SerializeField] private Color selectedColor = Color.green;
@@ -35,6 +39,7 @@ public class ConstructVisuals : MonoBehaviour
     {
         SetMeshRenderers();
         upgradeIndicatorImage.gameObject.SetActive(false);
+        originalScale = nodeConstruct.transform.localScale;
     }
     
     public void SetMeshRenderers()
@@ -107,29 +112,43 @@ public class ConstructVisuals : MonoBehaviour
         StartCoroutine(AnimateScale(time, constructName));
     }
     
-    public void ConstructChange(ConstructData constructData, bool isAnimated)
+    public void ConstructChange(ConstructData constructData, bool isAnimated, Color newConstructColor)
     {
+        if (isUpgrading)
+        {
+            nodeConstruct.transform.localScale = originalScale;
+            StopAllCoroutines();
+            if (constructData.upgradedVersion != null)
+            {
+                //Debug.Log("downgrading");
+                constructData = constructData.upgradedVersion;
+            }
+
+            isUpgrading = false;
+        }
+        
         if (isAnimated)
         {
-            StartCoroutine(AnimateConstructChange(constructData));
+            StartCoroutine(AnimateConstructChange(constructData, newConstructColor));
         }
         else
         {
-            ChangeConstruct(constructData);
+            ChangeConstruct(constructData, newConstructColor);
         }
     }
 
-    void ChangeConstruct(ConstructData constructData)
+    void ChangeConstruct(ConstructData constructData, Color newConstructColor)
     {
         Destroy(nodeConstruct);
         nodeConstruct = Instantiate(constructData.visualPrefab, transform.position, Quaternion.identity);
         nodeConstruct.transform.parent = transform;
         SetMeshRenderers();
-        UpdateColor(lastKnownColor);
+        UpdateColor(newConstructColor);
     }
 
     private IEnumerator AnimateScale(float duration, string constructName)
     {
+        isUpgrading = true;
         var scaleIncrease = 0.25f;
         Vector3 initialScale = nodeConstruct.transform.localScale;
         Vector3 finalScale = initialScale + new Vector3(scaleIncrease, scaleIncrease, scaleIncrease);
@@ -145,7 +164,7 @@ public class ConstructVisuals : MonoBehaviour
             yield return null;
         }
         
-        float reformDuration = 0.25f;
+        float reformDuration = 0.4f; // previously 0.25f
         float shrinkTime = reformDuration / 2.0f;
         float growTime = reformDuration / 2.0f;
 
@@ -191,10 +210,11 @@ public class ConstructVisuals : MonoBehaviour
             yield return null;
         }
 
+        isUpgrading = false;
         nodeConstruct.transform.localScale = initialScale;
     }
     
-    private IEnumerator AnimateConstructChange(ConstructData constructData)
+    public IEnumerator AnimateConstructChange(ConstructData constructData, Color newConstructColor)
     {
         var scaleIncrease = 0.25f;
         Vector3 initialScale = nodeConstruct.transform.localScale;
@@ -202,7 +222,7 @@ public class ConstructVisuals : MonoBehaviour
         float elapsedTime = 0f;
         float pulseFrequency = 1.0f;
         
-        float reformDuration = 0.25f;
+        float reformDuration = 0.4f; // previously 0.25f
         float shrinkTime = reformDuration / 2.0f;
         float growTime = reformDuration / 2.0f;
 
@@ -216,10 +236,35 @@ public class ConstructVisuals : MonoBehaviour
         }
 
         Destroy(nodeConstruct);
-        nodeConstruct = Instantiate(constructData.visualPrefab, transform.position, Quaternion.identity);
+        
+        Debug.Log(constructData.constructName);
+        
+        switch (constructData.constructName)
+        {
+            case "House1":
+                //Destroy(nodeConstruct);
+                nodeConstruct = Instantiate(house1Model, transform.position, Quaternion.identity);
+                nodeConstruct.transform.parent = transform;
+                break;
+            case "House2":
+                //Destroy(nodeConstruct);
+                nodeConstruct = Instantiate(house2Model, transform.position, Quaternion.identity);
+                nodeConstruct.transform.parent = transform;
+                break;
+            case "House3":
+                //Destroy(nodeConstruct);
+                nodeConstruct = Instantiate(house3Model, transform.position, Quaternion.identity);
+                nodeConstruct.transform.parent = transform;
+                break;
+            default:
+                Debug.LogError($"{constructData.constructName} is not a valid construct name!");
+                break;
+        }
+        
+        //nodeConstruct = Instantiate(constructData.visualPrefab, transform.position, Quaternion.identity);
         nodeConstruct.transform.parent = transform;
         SetMeshRenderers();
-        UpdateColor(lastKnownColor);
+        UpdateColor(newConstructColor);
 
         elapsedTime = 0f;
         while (elapsedTime < growTime)

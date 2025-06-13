@@ -86,22 +86,22 @@ public class ConstructController : MonoBehaviour
                     case initialLevelTypes.Level1:
                         currentConstructData = House1Data;
                         UnitCount = House1Data.maxUnitCapacity;
-                        visuals.ConstructChange(currentConstructData, false);
+                        visuals.ConstructChange(currentConstructData, false, Owner.factionColor);
                         break;
                     case initialLevelTypes.Level2:
                         currentConstructData = House2Data;
                         UnitCount = House2Data.maxUnitCapacity;
-                        visuals.ConstructChange(currentConstructData, false);
+                        visuals.ConstructChange(currentConstructData, false, Owner.factionColor);
                         break;
                     case initialLevelTypes.Level3:
                         currentConstructData = House3Data;
                         UnitCount = House3Data.maxUnitCapacity;
-                        visuals.ConstructChange(currentConstructData, false);
+                        visuals.ConstructChange(currentConstructData, false, Owner.factionColor);
                         break;
                     case initialLevelTypes.Level4:
                         currentConstructData = House4Data;
                         UnitCount = House4Data.maxUnitCapacity;
-                        visuals.ConstructChange(currentConstructData, false);
+                        visuals.ConstructChange(currentConstructData, false, Owner.factionColor);
                         break;
                 }
                 break;
@@ -227,21 +227,41 @@ public class ConstructController : MonoBehaviour
             UnitCount--;
             if (UnitCount < 0)
             {
-                bool wasUnclaimed = Owner.factionName == "Unclaimed";
                 Owner = unitOwner;
                 UnitCount = 1;
 
-                if (wasUnclaimed)
+                // --- CORRECTED LOGIC ---
+
+                ConstructData newStateData;
+
+                // Check if a downgrade is possible
+                if (currentConstructData.downgradedVersion != null)
                 {
-                    //currentConstructData = initialClaimedData;
+                    // It can be downgraded. The new state is the downgraded version.
+                    newStateData = currentConstructData.downgradedVersion;
+                }
+                else
+                {
+                    // It's already the lowest level. The state doesn't change, it just gets recaptured.
+                    newStateData = currentConstructData; 
                 }
 
+                // Now, update the actual data on this controller
+                currentConstructData = newStateData;
+
+                CancelInvoke("upgradeConstruct");
+                
+                // And call the animation with the (guaranteed non-null) data.
+                visuals.ConstructChange(newStateData, true, Owner.factionColor);
+
+                // --- END OF CORRECTION ---
+
                 if (isMouseOver) OnMouseEnter();
-                visuals.UpdateColor(Owner.factionColor);
+                //visuals.UpdateColor(Owner.factionColor);
                 UpdateVisualsForOwner();
             }
         }
-        
+    
         checkUpgradeIndicator();
     }
 
