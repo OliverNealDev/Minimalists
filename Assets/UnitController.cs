@@ -5,7 +5,7 @@ using System.Collections;
 [RequireComponent(typeof(NavMeshAgent))]
 public class UnitController : MonoBehaviour
 {
-    private FactionData owner;
+    public FactionData owner {get; private set;}
     private ConstructController target;
     private ConstructController spawnConstruct;
     private NavMeshAgent navMeshAgent;
@@ -16,6 +16,11 @@ public class UnitController : MonoBehaviour
     void Awake()
     {
         navMeshAgent = GetComponent<NavMeshAgent>();
+    }
+    
+    void Start()
+    {
+        GameManager.Instance.registerUnit(this);
     }
 
     void Update()
@@ -31,6 +36,7 @@ public class UnitController : MonoBehaviour
         if (Vector3.Distance(transform.position, target.transform.position) < 0.2f)
         {
             // The method ReceiveUnit(owner) needs to be added to your ConstructController script.
+            GameManager.Instance.unregisterUnit(this);
             target.ReceiveUnit(owner); 
             Destroy(gameObject);
         }

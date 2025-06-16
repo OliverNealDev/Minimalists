@@ -23,7 +23,7 @@ public class ConstructController : MonoBehaviour
     [SerializeField] private GameObject unitPrefab;
     
     public FactionData Owner { get; private set; }
-    public float UnitCount { get; private set; }
+    public int UnitCount { get; private set; }
     
     public ConstructData currentConstructData;
     private bool isUpgrading = false;
@@ -155,7 +155,7 @@ public class ConstructController : MonoBehaviour
         {
             if (UnitCount < houseData.maxUnitCapacity)
             {
-                unitGenerationBuffer += houseData.unitsPerSecond * Time.deltaTime;
+                if (!GameManager.Instance.IsPopulationCapFull(Owner)) unitGenerationBuffer += houseData.unitsPerSecond * Time.deltaTime;
                 if (unitGenerationBuffer >= 1f)
                 {
                     int wholeUnits = Mathf.FloorToInt(unitGenerationBuffer);

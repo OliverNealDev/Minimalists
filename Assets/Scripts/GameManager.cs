@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour
     public GameState currentState;
 
     public List<ConstructController> allConstructs;
+    public List<UnitController> allUnits;
     public FactionData unclaimedFaction;
     public FactionData playerFaction;
     public FactionData aiFaction;
@@ -55,6 +56,48 @@ public class GameManager : MonoBehaviour
         if (currentState == GameState.Playing)
         {
             CheckWinCondition();
+        }
+    }
+    
+    public void registerUnit(UnitController unit)
+    {
+        allUnits.Add(unit);
+    }
+    
+    public void unregisterUnit(UnitController unit)
+    {
+        allUnits.Remove(unit);
+    }
+
+    public bool IsPopulationCapFull(FactionData faction)
+    {
+        int countedPopulationCapacity = 0;
+        int countedPopulation = 0;
+        
+        foreach (ConstructController construct in allConstructs)
+        {
+            if (construct.Owner == faction && construct.currentConstructData is HouseData)
+            {
+                countedPopulationCapacity += ((HouseData)construct.currentConstructData).maxUnitCapacity;
+                countedPopulation += construct.UnitCount;
+            }
+        }
+
+        foreach (UnitController unit in allUnits)
+        {
+            if (unit.owner == faction)
+            {
+                countedPopulation += 1;
+            }
+        }
+        
+        if (countedPopulation >= countedPopulationCapacity)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 

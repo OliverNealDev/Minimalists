@@ -114,7 +114,7 @@ public class ConstructVisuals : MonoBehaviour
     
     public void ConstructChange(ConstructData constructData, bool isAnimated, Color newConstructColor)
     {
-        Debug.Log(isUpgrading);
+        //Debug.Log(isUpgrading);
         if (isUpgrading)
         {
             nodeConstruct.transform.localScale = originalScale;

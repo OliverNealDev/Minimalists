@@ -61,12 +61,12 @@ public class InputManager : MonoBehaviour
             if (timeSinceLastClick < doubleClickThreshold && lastClickedNode == clickedNode)
             {
                 clickedNode.AttemptUpgrade();
-                Debug.Log("Double-click detected on node: " + clickedNode.name);
+                //Debug.Log("Double-click detected on node: " + clickedNode.name);
                 ResetClickState();
             }
             else
             {
-                Debug.Log(timeSinceLastClick);
+                //Debug.Log(timeSinceLastClick);
                 HandleSelectionStart(clickedNode);
             }
         }
