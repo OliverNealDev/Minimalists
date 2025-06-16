@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class ConstructController : MonoBehaviour
 {
@@ -28,6 +29,7 @@ public class ConstructController : MonoBehaviour
     private bool isUpgrading = false;
     public ConstructVisuals visuals;
     private float unitGenerationBuffer = 0f;
+    private List<ConstructController> targetConstructs = new List<ConstructController>();
     
     private bool isMouseOver = false;
     
@@ -186,9 +188,22 @@ public class ConstructController : MonoBehaviour
 
     public void SendUnits(ConstructController target, float percentage)
     {
-        int unitsToSend = Mathf.FloorToInt(UnitCount * percentage);
-        if (unitsToSend > 0 && currentConstructData is HouseData)
+        bool isValidTarget = true;
+        foreach (ConstructController construct in targetConstructs)
         {
+            if (construct == target)
+            {
+                isValidTarget = false;
+                break;
+            }
+        }
+        
+        if (!isValidTarget) return;
+        
+        int unitsToSend = Mathf.FloorToInt(UnitCount * percentage);
+        if (unitsToSend > 0/* && currentConstructData is HouseData*/)
+        {
+            targetConstructs.Add(target);
             StartCoroutine(SpawnUnitsRoutine(unitsToSend, target));
         }
     }
@@ -199,7 +214,11 @@ public class ConstructController : MonoBehaviour
 
         for (int i = 0; i < count; i++)
         {
-            if (UnitCount <= 0) yield break;
+            if (UnitCount <= 0)
+            {
+                targetConstructs.Remove(target);
+                yield break;
+            }
             
             UnitCount--;
             checkUpgradeIndicator();
@@ -214,6 +233,8 @@ public class ConstructController : MonoBehaviour
             
             yield return new WaitForSeconds(spawnDelay);
         }
+        
+        targetConstructs.Remove(target);
     }
 
     public void ReceiveUnit(FactionData unitOwner)
