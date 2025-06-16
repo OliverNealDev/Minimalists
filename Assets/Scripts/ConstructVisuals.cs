@@ -114,15 +114,16 @@ public class ConstructVisuals : MonoBehaviour
     
     public void ConstructChange(ConstructData constructData, bool isAnimated, Color newConstructColor)
     {
+        Debug.Log(isUpgrading);
         if (isUpgrading)
         {
             nodeConstruct.transform.localScale = originalScale;
             StopAllCoroutines();
-            if (constructData.upgradedVersion != null)
+            /*if (constructData.upgradedVersion != null)
             {
-                //Debug.Log("downgrading");
+                Debug.Log("downgrading");
                 constructData = constructData.upgradedVersion;
-            }
+            }*/
 
             isUpgrading = false;
         }
@@ -239,7 +240,11 @@ public class ConstructVisuals : MonoBehaviour
         
         Debug.Log(constructData.constructName);
         
-        switch (constructData.constructName)
+        GameObject newNodeConstruct = Instantiate(constructData.visualPrefab, transform.position, Quaternion.identity);
+        newNodeConstruct.transform.parent = transform;
+        nodeConstruct = newNodeConstruct;
+        
+        /*switch (constructData.constructName)
         {
             case "House1":
                 //Destroy(nodeConstruct);
@@ -259,10 +264,9 @@ public class ConstructVisuals : MonoBehaviour
             default:
                 Debug.LogError($"{constructData.constructName} is not a valid construct name!");
                 break;
-        }
+        }*/
         
         //nodeConstruct = Instantiate(constructData.visualPrefab, transform.position, Quaternion.identity);
-        nodeConstruct.transform.parent = transform;
         SetMeshRenderers();
         UpdateColor(newConstructColor);
 

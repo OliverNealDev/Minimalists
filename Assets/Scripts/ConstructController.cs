@@ -229,35 +229,25 @@ public class ConstructController : MonoBehaviour
             {
                 Owner = unitOwner;
                 UnitCount = 1;
-
-                // --- CORRECTED LOGIC ---
-
+                
+                StopAllCoroutines();
+                
                 ConstructData newStateData;
-
-                // Check if a downgrade is possible
-                if (currentConstructData.downgradedVersion != null)
+                
+                if (currentConstructData.downgradedVersion != null && !isUpgrading)
                 {
-                    // It can be downgraded. The new state is the downgraded version.
                     newStateData = currentConstructData.downgradedVersion;
                 }
                 else
                 {
-                    // It's already the lowest level. The state doesn't change, it just gets recaptured.
+                    if (isUpgrading) CancelInvoke("upgradeConstruct");
                     newStateData = currentConstructData; 
                 }
-
-                // Now, update the actual data on this controller
-                currentConstructData = newStateData;
-
-                CancelInvoke("upgradeConstruct");
                 
-                // And call the animation with the (guaranteed non-null) data.
+                currentConstructData = newStateData;
                 visuals.ConstructChange(newStateData, true, Owner.factionColor);
-
-                // --- END OF CORRECTION ---
-
+                
                 if (isMouseOver) OnMouseEnter();
-                //visuals.UpdateColor(Owner.factionColor);
                 UpdateVisualsForOwner();
             }
         }
