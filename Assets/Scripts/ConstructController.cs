@@ -252,6 +252,7 @@ public class ConstructController : MonoBehaviour
                 UnitCount = 1;
                 
                 StopAllCoroutines();
+                targetConstructs.Clear();
                 
                 ConstructData newStateData;
                 
