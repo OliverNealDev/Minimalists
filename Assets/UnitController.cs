@@ -54,6 +54,12 @@ public class UnitController : MonoBehaviour
         StartCoroutine(ProximityCheckRoutine());
     }
 
+    public void OnShot()
+    {
+        GameManager.Instance.unregisterUnit(this);
+        Destroy(gameObject);
+    }
+
     private IEnumerator ProximityCheckRoutine()
     {
         while (true)

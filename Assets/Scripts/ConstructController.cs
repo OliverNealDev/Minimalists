@@ -10,14 +10,14 @@ public class ConstructController : MonoBehaviour
     public HouseData House2Data;
     public HouseData House3Data;
     public HouseData House4Data;
-    public ConstructData Forge1Data;
-    public ConstructData Forge2Data;
-    public ConstructData Forge3Data;
-    public ConstructData Forge4Data;
-    public ConstructData Turret1Data;
-    public ConstructData Turret2Data;
-    public ConstructData Turret3Data;
-    public ConstructData Turret4Data;
+    public ForgeData Forge1Data;
+    public ForgeData Forge2Data;
+    public ForgeData Forge3Data;
+    public ForgeData Forge4Data;
+    public TurretData Turret1Data;
+    public TurretData Turret2Data;
+    public TurretData Turret3Data;
+    public TurretData Turret4Data;
 
     [Header("Unit Spawning")]
     [SerializeField] private GameObject unitPrefab;
@@ -29,6 +29,7 @@ public class ConstructController : MonoBehaviour
     private bool isUpgrading = false;
     public ConstructVisuals visuals;
     private float unitGenerationBuffer = 0f;
+    private float shootCooldownBuffer = 0f;
     private List<ConstructController> targetConstructs = new List<ConstructController>();
     
     private bool isMouseOver = false;
@@ -61,7 +62,6 @@ public class ConstructController : MonoBehaviour
     {
         visuals = GetComponent<ConstructVisuals>();
     }
-
     void Start()
     {
         switch (initialOwner)
@@ -112,15 +112,19 @@ public class ConstructController : MonoBehaviour
                 {
                     case initialLevelTypes.Level1:
                         currentConstructData = Turret1Data;
+                        visuals.ConstructChange(currentConstructData, false, Owner.factionColor);
                         break;
                     case initialLevelTypes.Level2:
                         currentConstructData = Turret2Data;
+                        visuals.ConstructChange(currentConstructData, false, Owner.factionColor);
                         break;
                     case initialLevelTypes.Level3:
                         currentConstructData = Turret3Data;
+                        visuals.ConstructChange(currentConstructData, false, Owner.factionColor);
                         break;
                     case initialLevelTypes.Level4:
                         currentConstructData = Turret4Data;
+                        visuals.ConstructChange(currentConstructData, false, Owner.factionColor);
                         break;
                 }
                 break;
@@ -143,10 +147,10 @@ public class ConstructController : MonoBehaviour
                 break;
         }
 
+        visuals.UpdateUnitCapacity(UnitCount, currentConstructData);
         checkUpgradeIndicator();
         //InvokeRepeating("checkUpgradeIndicator", 0.05f, 0.05f);
     }
-
     void Update()
     {
         if (Owner == null) return;
@@ -160,15 +164,41 @@ public class ConstructController : MonoBehaviour
                 {
                     int wholeUnits = Mathf.FloorToInt(unitGenerationBuffer);
                     UnitCount += wholeUnits;
+                    visuals.UpdateUnitCapacity(UnitCount, currentConstructData);
                     checkUpgradeIndicator();
                     unitGenerationBuffer -= wholeUnits;
                 }
             }
-            visuals.UpdateUnitCapacity(UnitCount, houseData.maxUnitCapacity);
         }
         else if (currentConstructData is TurretData turretData)
         {
-            // Placeholder for Turret logic (e.g., finding and shooting targets)
+            shootCooldownBuffer -= Time.deltaTime;
+            if (shootCooldownBuffer <= 0f)
+            {
+                Collider[] colliders = Physics.OverlapSphere(transform.position, turretData.range);
+                UnitController nearestEnemy = null;
+                float minDistance = float.MaxValue;
+
+                foreach (Collider col in colliders)
+                {
+                    UnitController unit = col.GetComponent<UnitController>();
+                    if (unit != null && unit.owner != this.Owner)
+                    {
+                        float distance = Vector3.Distance(transform.position, col.transform.position);
+                        if (distance < minDistance)
+                        {
+                            minDistance = distance;
+                            nearestEnemy = unit;
+                        }
+                    }
+                }
+
+                if (nearestEnemy != null)
+                {
+                    nearestEnemy.OnShot();
+                    shootCooldownBuffer = 1f / turretData.fireRate;
+                }
+            }
         }
         else if (currentConstructData is ForgeData forgeData)
         {
@@ -177,7 +207,6 @@ public class ConstructController : MonoBehaviour
 
         visuals.UpdateUnitCount(Mathf.FloorToInt(UnitCount));
     }
-
     public void SetInitialOwner(FactionData newOwner)
     {
         Owner = newOwner;
@@ -185,7 +214,7 @@ public class ConstructController : MonoBehaviour
         UpdateVisualsForOwner();
         checkUpgradeIndicator();
     }
-
+    
     public void SendUnits(ConstructController target, float percentage)
     {
         bool isValidTarget = true;
@@ -201,13 +230,16 @@ public class ConstructController : MonoBehaviour
         if (!isValidTarget) return;
         
         int unitsToSend = Mathf.FloorToInt(UnitCount * percentage);
-        if (unitsToSend > 0/* && currentConstructData is HouseData*/)
+        if (unitsToSend == 0 && UnitCount > 0)
+        {
+            unitsToSend = 1;
+        }
+        if (unitsToSend > 0)
         {
             targetConstructs.Add(target);
             StartCoroutine(SpawnUnitsRoutine(unitsToSend, target));
         }
     }
-
     private IEnumerator SpawnUnitsRoutine(int count, ConstructController target)
     {
         float spawnDelay = 1f / 4f;
@@ -221,6 +253,7 @@ public class ConstructController : MonoBehaviour
             }
             
             UnitCount--;
+            visuals.UpdateUnitCapacity(UnitCount, currentConstructData);
             checkUpgradeIndicator();
             Vector3 spawnPosition = new Vector3(transform.position.x, 0.68125f, transform.position.z);
             GameObject unit = Instantiate(unitPrefab, spawnPosition, Quaternion.identity);
@@ -236,7 +269,6 @@ public class ConstructController : MonoBehaviour
         
         targetConstructs.Remove(target);
     }
-
     public void ReceiveUnit(FactionData unitOwner)
     {
         if (unitOwner == Owner)
@@ -274,9 +306,10 @@ public class ConstructController : MonoBehaviour
             }
         }
     
+        visuals.UpdateUnitCapacity(UnitCount, currentConstructData);
         checkUpgradeIndicator();
     }
-
+    
     public void AttemptUpgrade()
     {
         if (currentConstructData.upgradedVersion == null)
@@ -291,7 +324,8 @@ public class ConstructController : MonoBehaviour
         {
             UnitCount -= currentConstructData.upgradeCost;
             
-            visuals.UpgradeScale(currentConstructData.upgradeTime, currentConstructData.constructName);
+            ConstructData newConstructData = currentConstructData.upgradedVersion;
+            visuals.UpgradeScale(currentConstructData.upgradeTime, newConstructData);
             Invoke("UpgradeConstruct", currentConstructData.upgradeTime);
             isUpgrading = true;
             checkUpgradeIndicator();
@@ -303,7 +337,6 @@ public class ConstructController : MonoBehaviour
             Debug.Log("Not enough units to upgrade.");
         }
     }
-
     private void UpgradeConstruct()
     {
         currentConstructData = currentConstructData.upgradedVersion;
@@ -321,7 +354,6 @@ public class ConstructController : MonoBehaviour
             visuals.HideVisuals();
         }
     }
-
     public void SetSelected(bool isSelected)
     {
         if (isSelected)
@@ -339,7 +371,6 @@ public class ConstructController : MonoBehaviour
             visuals.UpdateSelection(false);
         }
     }
-    
     private void checkUpgradeIndicator()
     {
         if (currentConstructData == null) return;
@@ -363,7 +394,7 @@ public class ConstructController : MonoBehaviour
             Debug.Log("Upgrade indicator is now hidden for " + currentConstructData.constructName);
         }
     }
-
+    
     private void OnMouseEnter()
     {
         isMouseOver = true;
@@ -390,7 +421,6 @@ public class ConstructController : MonoBehaviour
             visuals.UpdateSelection(true);
         }
     }
-
     private void OnMouseExit()
     {
         isMouseOver = false;

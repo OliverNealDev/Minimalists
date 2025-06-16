@@ -88,10 +88,32 @@ public class ConstructVisuals : MonoBehaviour
         selectionIndicator.GetComponent<Renderer>().material.color = color;
     }
     
-    public void UpdateUnitCapacity(float current, float max)
+    public void UpdateUnitCapacity(float current, ConstructData constructData)
     {
-        unitCapacitySlider.value = current / max;
-        unitCapacityFillImage.gameObject.SetActive(max > 0);
+        if (constructData is HouseData)
+        {
+            int max = ((HouseData)constructData).maxUnitCapacity;
+            unitCapacitySlider.value = current / max;
+            //unitCapacityFillImage.gameObject.SetActive(max > 0);
+            if (current == 0)
+            {
+                unitCapacityFillImage.gameObject.SetActive(false);
+            }
+            else
+            {
+                unitCapacityFillImage.gameObject.SetActive(true);
+            }
+        }
+        else if (current > 0)
+        {
+            unitCapacitySlider.value = 1;
+            unitCapacityFillImage.gameObject.SetActive(true);
+        }
+        else
+        {
+            unitCapacitySlider.value = 0;
+            unitCapacityFillImage.gameObject.SetActive(false);
+        }
     }
     
     public void HideVisuals()
@@ -107,24 +129,17 @@ public class ConstructVisuals : MonoBehaviour
         unitCapacitySlider.gameObject.SetActive(true);
     }
     
-    public void UpgradeScale(float time, string constructName)
+    public void UpgradeScale(float time, ConstructData constructData)
     {
-        StartCoroutine(AnimateScale(time, constructName));
+        StartCoroutine(AnimateScale(time, constructData));
     }
     
     public void ConstructChange(ConstructData constructData, bool isAnimated, Color newConstructColor)
     {
-        //Debug.Log(isUpgrading);
         if (isUpgrading)
         {
             nodeConstruct.transform.localScale = originalScale;
             StopAllCoroutines();
-            /*if (constructData.upgradedVersion != null)
-            {
-                Debug.Log("downgrading");
-                constructData = constructData.upgradedVersion;
-            }*/
-
             isUpgrading = false;
         }
         
@@ -147,7 +162,7 @@ public class ConstructVisuals : MonoBehaviour
         UpdateColor(newConstructColor);
     }
 
-    private IEnumerator AnimateScale(float duration, string constructName)
+    private IEnumerator AnimateScale(float duration, ConstructData constructData)
     {
         isUpgrading = true;
         var scaleIncrease = 0.25f;
@@ -178,7 +193,7 @@ public class ConstructVisuals : MonoBehaviour
             yield return null;
         }
 
-        switch (constructName)
+        /*switch (constructName)
         {
             case "House1":
                 Destroy(nodeConstruct);
@@ -198,7 +213,12 @@ public class ConstructVisuals : MonoBehaviour
             default:
                 Debug.LogError($"{constructName} is not a valid construct name!");
                 break;
-        }
+        }*/
+        
+        Destroy(nodeConstruct);
+        GameObject newNodeConstruct = Instantiate(constructData.visualPrefab, transform.position, Quaternion.identity);
+        newNodeConstruct.transform.parent = transform;
+        nodeConstruct = newNodeConstruct;
         
         SetMeshRenderers();
         UpdateColor(lastKnownColor);
