@@ -136,10 +136,10 @@ public class ConstructVisuals : MonoBehaviour
     
     public void ConstructChange(ConstructData constructData, bool isAnimated, Color newConstructColor)
     {
+        StopAllCoroutines(); // was in isUpgrading but house didnt visually upgrade once
         if (isUpgrading)
         {
             nodeConstruct.transform.localScale = originalScale;
-            StopAllCoroutines();
             isUpgrading = false;
         }
         
@@ -192,28 +192,6 @@ public class ConstructVisuals : MonoBehaviour
             elapsedTime += Time.deltaTime;
             yield return null;
         }
-
-        /*switch (constructName)
-        {
-            case "House1":
-                Destroy(nodeConstruct);
-                nodeConstruct = Instantiate(house2Model, transform.position, Quaternion.identity);
-                nodeConstruct.transform.parent = transform;
-                break;
-            case "House2":
-                Destroy(nodeConstruct);
-                nodeConstruct = Instantiate(house3Model, transform.position, Quaternion.identity);
-                nodeConstruct.transform.parent = transform;
-                break;
-            case "House3":
-                Destroy(nodeConstruct);
-                nodeConstruct = Instantiate(house4Model, transform.position, Quaternion.identity);
-                nodeConstruct.transform.parent = transform;
-                break;
-            default:
-                Debug.LogError($"{constructName} is not a valid construct name!");
-                break;
-        }*/
         
         Destroy(nodeConstruct);
         GameObject newNodeConstruct = Instantiate(constructData.visualPrefab, transform.position, Quaternion.identity);
@@ -238,7 +216,7 @@ public class ConstructVisuals : MonoBehaviour
     public IEnumerator AnimateConstructChange(ConstructData constructData, Color newConstructColor)
     {
         var scaleIncrease = 0.25f;
-        Vector3 initialScale = nodeConstruct.transform.localScale;
+        Vector3 initialScale = originalScale;
         Vector3 finalScale = initialScale + new Vector3(scaleIncrease, scaleIncrease, scaleIncrease);
         float elapsedTime = 0f;
         float pulseFrequency = 1.0f;
@@ -264,29 +242,6 @@ public class ConstructVisuals : MonoBehaviour
         newNodeConstruct.transform.parent = transform;
         nodeConstruct = newNodeConstruct;
         
-        /*switch (constructData.constructName)
-        {
-            case "House1":
-                //Destroy(nodeConstruct);
-                nodeConstruct = Instantiate(house1Model, transform.position, Quaternion.identity);
-                nodeConstruct.transform.parent = transform;
-                break;
-            case "House2":
-                //Destroy(nodeConstruct);
-                nodeConstruct = Instantiate(house2Model, transform.position, Quaternion.identity);
-                nodeConstruct.transform.parent = transform;
-                break;
-            case "House3":
-                //Destroy(nodeConstruct);
-                nodeConstruct = Instantiate(house3Model, transform.position, Quaternion.identity);
-                nodeConstruct.transform.parent = transform;
-                break;
-            default:
-                Debug.LogError($"{constructData.constructName} is not a valid construct name!");
-                break;
-        }*/
-        
-        //nodeConstruct = Instantiate(constructData.visualPrefab, transform.position, Quaternion.identity);
         SetMeshRenderers();
         UpdateColor(newConstructColor);
 

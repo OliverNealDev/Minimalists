@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class ConstructController : MonoBehaviour
 {
@@ -57,6 +58,13 @@ public class ConstructController : MonoBehaviour
         Level4
     }
     public initialLevelTypes initialLevel;
+    public enum initialUnitCapacityTypes
+    {
+        Automatic,
+        Manual
+    }
+    public initialUnitCapacityTypes initialUnitCapacityType;
+    public int manualInitialUnitCapacity = 0;
 
     void Awake()
     {
@@ -87,23 +95,21 @@ public class ConstructController : MonoBehaviour
                 {
                     case initialLevelTypes.Level1:
                         currentConstructData = House1Data;
-                        UnitCount = House1Data.maxUnitCapacity;
+                        if (initialUnitCapacityType == initialUnitCapacityTypes.Automatic) UnitCount = House1Data.maxUnitCapacity;
                         visuals.ConstructChange(currentConstructData, false, Owner.factionColor);
                         break;
                     case initialLevelTypes.Level2:
                         currentConstructData = House2Data;
-                        UnitCount = House2Data.maxUnitCapacity;
+                        if (initialUnitCapacityType == initialUnitCapacityTypes.Automatic) UnitCount = House2Data.maxUnitCapacity;
                         visuals.ConstructChange(currentConstructData, false, Owner.factionColor);
                         break;
                     case initialLevelTypes.Level3:
                         currentConstructData = House3Data;
-                        UnitCount = House3Data.maxUnitCapacity;
+                        if (initialUnitCapacityType == initialUnitCapacityTypes.Automatic) UnitCount = House3Data.maxUnitCapacity;
                         visuals.ConstructChange(currentConstructData, false, Owner.factionColor);
                         break;
                     case initialLevelTypes.Level4:
                         currentConstructData = House4Data;
-                        UnitCount = House4Data.maxUnitCapacity;
-                        visuals.ConstructChange(currentConstructData, false, Owner.factionColor);
                         break;
                 }
                 break;
@@ -147,6 +153,34 @@ public class ConstructController : MonoBehaviour
                 break;
         }
 
+        if (initialUnitCapacityType == initialUnitCapacityTypes.Automatic)
+        {
+            switch (initialLevel)
+            {
+                case initialLevelTypes.Level1:
+                    UnitCount = House1Data.maxUnitCapacity;
+                    break;
+                case initialLevelTypes.Level2:
+                    UnitCount = House2Data.maxUnitCapacity;
+                    break;
+                case initialLevelTypes.Level3:
+                    UnitCount = House3Data.maxUnitCapacity;
+                    break;
+                case initialLevelTypes.Level4:
+                    UnitCount = House4Data.maxUnitCapacity;
+                    break;
+                default:
+                    UnitCount = 0;
+                    Debug.LogWarning("No valid level set for initialUnitCapacityType, defaulting to 0.");
+                    break;
+            }
+        }
+        else
+        {
+            UnitCount = manualInitialUnitCapacity;
+        }
+        
+        visuals.ConstructChange(currentConstructData, false, Owner.factionColor);
         visuals.UpdateUnitCapacity(UnitCount, currentConstructData);
         checkUpgradeIndicator();
         //InvokeRepeating("checkUpgradeIndicator", 0.05f, 0.05f);
@@ -195,7 +229,11 @@ public class ConstructController : MonoBehaviour
 
                 if (nearestEnemy != null)
                 {
-                    nearestEnemy.OnShot();
+                    GameObject newTurretProjectile = Instantiate(turretData.projectilePrefab, transform.position + new Vector3(0, 1, 0), Quaternion.identity);
+                    turretProjectileController projectileController = newTurretProjectile.GetComponent<turretProjectileController>();
+                    projectileController.owner = Owner;
+                    projectileController.target = nearestEnemy;
+                    
                     shootCooldownBuffer = 1f / turretData.fireRate;
                 }
             }
@@ -314,7 +352,7 @@ public class ConstructController : MonoBehaviour
     {
         if (currentConstructData.upgradedVersion == null)
         {
-            Debug.Log("This construct is at its maximum level.");
+            //Debug.Log("This construct is at its maximum level.");
             return;
         }
         
@@ -330,11 +368,11 @@ public class ConstructController : MonoBehaviour
             isUpgrading = true;
             checkUpgradeIndicator();
             
-            Debug.Log($"{name} has started the upgrade to {currentConstructData.constructName}!");
+            //Debug.Log($"{name} has started the upgrade to {currentConstructData.constructName}!");
         }
         else
         {
-            Debug.Log("Not enough units to upgrade.");
+            //Debug.Log("Not enough units to upgrade.");
         }
     }
     private void UpgradeConstruct()
