@@ -362,6 +362,7 @@ public class ConstructController : MonoBehaviour
         {
             UnitCount -= currentConstructData.upgradeCost;
             
+            visuals.UpdateUnitCapacity(UnitCount, currentConstructData);
             ConstructData newConstructData = currentConstructData.upgradedVersion;
             visuals.UpgradeScale(currentConstructData.upgradeTime, newConstructData);
             Invoke("UpgradeConstruct", currentConstructData.upgradeTime);

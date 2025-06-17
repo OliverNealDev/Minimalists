@@ -80,7 +80,7 @@ public class GameManager : MonoBehaviour
             {
                 countedPopulationCapacity += ((HouseData)construct.currentConstructData).maxUnitCapacity;
             }
-            else if (construct.Owner == faction)
+            if (construct.Owner == faction)
             {
                 countedPopulation += construct.UnitCount;
             }

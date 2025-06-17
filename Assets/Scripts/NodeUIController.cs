@@ -5,6 +5,7 @@ public class NodeUIController : MonoBehaviour
 {
     public Transform targetNode;
     public float screenOffsetY = 30f;
+    public float screenOffsetX = 0f;
 
     private Camera mainCamera;
     private Vector3 worldOffsetFromPivot;
@@ -31,6 +32,7 @@ public class NodeUIController : MonoBehaviour
         Vector3 screenPosition = mainCamera.WorldToScreenPoint(worldPosition);
 
         screenPosition.y += screenOffsetY;
+        screenPosition.x += screenOffsetX;
         
         transform.position = screenPosition;
     }
