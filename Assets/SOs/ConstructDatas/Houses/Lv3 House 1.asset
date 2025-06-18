@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06f6f364acb4db04087954ab5836ac46, type: 3}
+  m_Name: Lv3 House 1
+  m_EditorClassIdentifier: 
+  constructName: House3
+  visualPrefab: {fileID: 5306549449812311771, guid: 11b0e736ac9cf924ea928869226af974, type: 3}
+  upgradeCost: 20
+  upgradeTime: 12
+  upgradedVersion: {fileID: 11400000, guid: 0a9f3e1df1fc7e6468dea5a4f2d5a069, type: 2}
+  downgradedVersion: {fileID: 11400000, guid: 17e49bbc1d0b3584b802030673430ad6, type: 2}
+  maxUnitCapacity: 30
+  unitsPerSecond: 1

@@ -20,6 +20,7 @@ public class ConstructController : MonoBehaviour
     public TurretData Turret2Data;
     public TurretData Turret3Data;
     public TurretData Turret4Data;
+    public HelipadData HelipadData;
 
     [Header("Unit Spawning")]
     [SerializeField] private GameObject unitPrefab;
@@ -53,7 +54,8 @@ public class ConstructController : MonoBehaviour
     {
         House,
         Turret,
-        Mortar
+        Mortar,
+        Helipad
     }
     public initialConstructTypes initialConstructType;
     public enum initialLevelTypes
@@ -158,6 +160,9 @@ public class ConstructController : MonoBehaviour
                         currentConstructData = Mortar4Data;
                         break;
                 }
+                break;
+            case initialConstructTypes.Helipad:
+                currentConstructData = HelipadData;
                 break;
         }
 
@@ -307,7 +312,7 @@ public class ConstructController : MonoBehaviour
             UnitController unitController = unit.GetComponent<UnitController>();
             if (unitController != null)
             {
-                unitController.Initialize(Owner, this, target);
+                unitController.Initialize(Owner, this, target, currentConstructData is HelipadData);
             }
             
             yield return new WaitForSeconds(spawnDelay);
