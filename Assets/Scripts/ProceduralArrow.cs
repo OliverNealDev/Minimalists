@@ -28,6 +28,8 @@ public class ProceduralArrow : MonoBehaviour
 
     [Tooltip("An offset applied to the end point of the arrow.")]
     public Vector3 endOffset = Vector3.zero;
+    
+    private Vector3 parentWorldOffset;
 
     private MeshFilter meshFilter;
     private Mesh mesh;
@@ -56,8 +58,12 @@ public class ProceduralArrow : MonoBehaviour
             Initialize();
         }
 
-        Vector3 actualStartPoint = startPoint + startOffset;
-        Vector3 actualEndPoint = endPoint + endOffset;
+        parentWorldOffset = transform.parent.position;
+        parentWorldOffset.y -= 5;
+        parentWorldOffset.z += 5;
+        
+        Vector3 actualStartPoint = startPoint + startOffset - parentWorldOffset;
+        Vector3 actualEndPoint = endPoint + endOffset - parentWorldOffset;
 
         if (Vector3.Distance(actualStartPoint, actualEndPoint) < 0.1f)
         {

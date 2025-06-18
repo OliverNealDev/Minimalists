@@ -8142,6 +8142,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: ProceduralArrow
       objectReference: {fileID: 0}
+    - target: {fileID: 6035548897825376651, guid: 0ccb226fed72bc7489b43ad480a141c3, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8060928153935258410, guid: 0ccb226fed72bc7489b43ad480a141c3, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.059449732
@@ -8216,7 +8220,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9173298069538389453, guid: 0ccb226fed72bc7489b43ad480a141c3, type: 3}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

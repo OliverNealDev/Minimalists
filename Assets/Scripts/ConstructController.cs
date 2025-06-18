@@ -39,6 +39,7 @@ public class ConstructController : MonoBehaviour
     private bool isMouseOver = false;
     
     public ProceduralArrow arrowInstance;
+    public MortarProceduralArrow mortarProceduralArrow;
     
     public enum initialOwnerTypes
     {
@@ -446,28 +447,6 @@ public class ConstructController : MonoBehaviour
             // Debug.LogWarning("Attempted to fire a mortar from a non-mortar construct.");
         }
     }
-
-    private void OnMouseDown()
-    {
-        if (InputManager.Instance.IsSelecting)
-        {
-            return;
-        }
-
-        if (InputManager.Instance.MortarAwaitingTarget != null)
-        {
-            ConstructController firingMortar = InputManager.Instance.MortarAwaitingTarget;
-            if (this.Owner != firingMortar.Owner)
-            {
-                firingMortar.FireMortarAt(this);
-            }
-            InputManager.Instance.ClearMortarTargeting();
-        }
-        else if (currentConstructData is MortarData && this.Owner == GameManager.Instance.playerFaction)
-        {
-            InputManager.Instance.SetMortarForTargeting(this);
-        }
-    }
     
     private void UpdateVisualsForOwner()
     {
@@ -560,22 +539,75 @@ public class ConstructController : MonoBehaviour
             arrowInstance.archHeight = 0;
             arrowInstance.SetPoints(InputManager.Instance.startNode.transform.position, this.transform.position);
         }
+        // --- CORRECTED MORTAR LOGIC ---
         else if (InputManager.Instance.MortarAwaitingTarget != null)
         {
-            arrowInstance.gameObject.SetActive(true);
-            arrowInstance.archHeight = 25;
-            arrowInstance.SetPoints(InputManager.Instance.MortarAwaitingTarget.transform.position, this.transform.position);
+            ConstructController firingMortar = InputManager.Instance.MortarAwaitingTarget;
+            if (this.Owner != firingMortar.Owner)
+            {
+                // 1. Get the arrow script FROM THE FIRING MORTAR.
+                MortarProceduralArrow arrowOnMortar = firingMortar.GetComponent<MortarProceduralArrow>();
+
+                // 2. If the mortar has the script, tell it to target THIS building.
+                if (arrowOnMortar != null)
+                {
+                    arrowOnMortar.target = this.transform;
+                }
+            }
+        }
+    }
+    private void OnMouseDown()
+    {
+        if (InputManager.Instance.IsSelecting)
+        {
+            return;
+        }
+
+        if (InputManager.Instance.MortarAwaitingTarget != null)
+        {
+            ConstructController firingMortar = InputManager.Instance.MortarAwaitingTarget;
+            if (this.Owner != firingMortar.Owner)
+            {
+                firingMortar.FireMortarAt(this);
+                
+                MortarProceduralArrow arrowOnMortar = firingMortar.GetComponent<MortarProceduralArrow>();
+                if (arrowOnMortar != null) arrowOnMortar.target = null;
+
+            }
+            InputManager.Instance.ClearMortarTargeting();
+        }
+        else if (currentConstructData is MortarData && this.Owner == GameManager.Instance.playerFaction)
+        {
+            InputManager.Instance.SetMortarForTargeting(this);
         }
     }
     private void OnMouseExit()
     {
         isMouseOver = false;
-        
+
+        // This is the original, correct condition for hiding the regular selection visuals and arrow.
+        // It hides them if you are not selecting, OR if you are selecting and move off a potential target.
         if (!InputManager.Instance.IsSelecting || (InputManager.Instance.IsSelecting && InputManager.Instance.startNode != this))
         {
             visuals.UpdateSelection(false);
-            
-            arrowInstance.gameObject.SetActive(false);
+            if(arrowInstance != null)
+            {
+                arrowInstance.gameObject.SetActive(false);
+            }
+        }
+
+        // This is the new, correct logic for hiding the mortar arrow.
+        // This needs to run independently of the regular selection state.
+        if (InputManager.Instance.MortarAwaitingTarget != null)
+        {
+            // Get the arrow script FROM THE FIRING MORTAR, not this building.
+            MortarProceduralArrow arrowOnMortar = InputManager.Instance.MortarAwaitingTarget.GetComponent<MortarProceduralArrow>();
+        
+            // If that arrow component exists, clear its target. Its own Update() loop will handle hiding it.
+            if (arrowOnMortar != null)
+            {
+                arrowOnMortar.target = null;
+            }
         }
     }
 }
