@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 938d47d7f6e16c74f9c1a22e97403f06, type: 3}
-  m_Name: Lv4 Turret
+  m_Name: Lv3 Turret
   m_EditorClassIdentifier: 
-  constructName: Turret4
-  visualPrefab: {fileID: 1368772909368419100, guid: 90dcbfc3c81213f4580e70b7f7119a73, type: 3}
-  upgradeCost: 0
-  upgradeTime: 0
-  upgradedVersion: {fileID: 0}
-  downgradedVersion: {fileID: 11400000, guid: 6ba3e1b1b020fff4d88302bbcd91a608, type: 2}
-  fireRate: 1.6
-  range: 3
+  constructName: Turret3
+  visualPrefab: {fileID: 1368772909368419100, guid: 083b48c249682a94db83ad977ab0d790, type: 3}
+  upgradeCost: 20
+  upgradeTime: 12
+  upgradedVersion: {fileID: 11400000, guid: 3f43db7e94be11948933cf3925177a72, type: 2}
+  downgradedVersion: {fileID: 11400000, guid: 8598c56572f7a324c864011d81b45d46, type: 2}
+  fireRate: 1.4
+  range: 2.4
   projectilePrefab: {fileID: 919275896509536386, guid: c8c1f2acc9e9b744dbeb9e6774fad8fe, type: 3}

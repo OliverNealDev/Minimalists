@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7bf06b0e73467d4dac9eade8aa6b448, type: 3}
+  m_Name: Lv3 Mortar
+  m_EditorClassIdentifier: 
+  constructName: Mortar3
+  visualPrefab: {fileID: 1368772909368419100, guid: 78bf316f065ba944a9164d5d8d2abfd5, type: 3}
+  upgradeCost: 20
+  upgradeTime: 12
+  upgradedVersion: {fileID: 11400000, guid: 9255357f8b93de0409248a0afde6ad09, type: 2}
+  downgradedVersion: {fileID: 11400000, guid: 510cda2ff34151842b9bf5761c8cb7b5, type: 2}
+  KillPercentage: 0.35
+  DowngradeChance: 0.4

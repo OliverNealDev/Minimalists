@@ -7,6 +7,8 @@ public class InputManager : MonoBehaviour
     
     public LayerMask constructLayer;
     public float doubleClickThreshold = 0.25f;
+    
+    public ConstructController MortarAwaitingTarget { get; private set; }
 
     private Camera mainCamera;
     public ConstructController startNode;
@@ -30,6 +32,16 @@ public class InputManager : MonoBehaviour
         mainCamera = Camera.main;
     }
 
+    public void SetMortarForTargeting(ConstructController mortar)
+    {
+        MortarAwaitingTarget = mortar;
+    }
+
+    public void ClearMortarTargeting()
+    {
+        MortarAwaitingTarget = null;
+    }
+    
     void Update()
     {
         timeSinceLastClick += Time.deltaTime;
@@ -42,6 +54,22 @@ public class InputManager : MonoBehaviour
         if (Input.GetMouseButtonUp(0))
         {
             HandleSelectionEnd();
+        }
+        
+        if (MortarAwaitingTarget != null)
+        {
+            if (Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.Escape))
+            {
+                ClearMortarTargeting();
+            }
+            else if (Input.GetMouseButtonDown(0))
+            {
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                if (!Physics.Raycast(ray, 100f))
+                {
+                    ClearMortarTargeting();
+                }
+            }
         }
     }
 

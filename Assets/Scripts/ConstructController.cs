@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class ConstructController : MonoBehaviour
@@ -11,10 +12,10 @@ public class ConstructController : MonoBehaviour
     public HouseData House2Data;
     public HouseData House3Data;
     public HouseData House4Data;
-    public ForgeData Forge1Data;
-    public ForgeData Forge2Data;
-    public ForgeData Forge3Data;
-    public ForgeData Forge4Data;
+    public MortarData Mortar1Data;
+    public MortarData Mortar2Data;
+    public MortarData Mortar3Data;
+    public MortarData Mortar4Data;
     public TurretData Turret1Data;
     public TurretData Turret2Data;
     public TurretData Turret3Data;
@@ -33,7 +34,11 @@ public class ConstructController : MonoBehaviour
     private float shootCooldownBuffer = 0f;
     private List<ConstructController> targetConstructs = new List<ConstructController>();
     
+    public GameObject mortarProjectile;
+    
     private bool isMouseOver = false;
+    
+    public ProceduralArrow arrowInstance;
     
     public enum initialOwnerTypes
     {
@@ -47,7 +52,7 @@ public class ConstructController : MonoBehaviour
     {
         House,
         Turret,
-        Forge
+        Mortar
     }
     public initialConstructTypes initialConstructType;
     public enum initialLevelTypes
@@ -69,6 +74,8 @@ public class ConstructController : MonoBehaviour
     void Awake()
     {
         visuals = GetComponent<ConstructVisuals>();
+
+        arrowInstance = FindFirstObjectByType<ProceduralArrow>();
     }
     void Start()
     {
@@ -134,20 +141,20 @@ public class ConstructController : MonoBehaviour
                         break;
                 }
                 break;
-            case initialConstructTypes.Forge:
+            case initialConstructTypes.Mortar:
                 switch (initialLevel)
                 {
                     case initialLevelTypes.Level1:
-                        currentConstructData = Forge1Data;
+                        currentConstructData = Mortar1Data;
                         break;
                     case initialLevelTypes.Level2:
-                        currentConstructData = Forge2Data;
+                        currentConstructData = Mortar2Data;
                         break;
                     case initialLevelTypes.Level3:
-                        currentConstructData = Forge3Data;
+                        currentConstructData = Mortar3Data;
                         break;
                     case initialLevelTypes.Level4:
-                        currentConstructData = Forge4Data;
+                        currentConstructData = Mortar4Data;
                         break;
                 }
                 break;
@@ -229,7 +236,7 @@ public class ConstructController : MonoBehaviour
 
                 if (nearestEnemy != null)
                 {
-                    GameObject newTurretProjectile = Instantiate(turretData.projectilePrefab, transform.position + new Vector3(0, 1, 0), Quaternion.identity);
+                    GameObject newTurretProjectile = Instantiate(turretData.projectilePrefab, transform.position, Quaternion.identity);
                     turretProjectileController projectileController = newTurretProjectile.GetComponent<turretProjectileController>();
                     projectileController.owner = Owner;
                     projectileController.target = nearestEnemy;
@@ -238,9 +245,9 @@ public class ConstructController : MonoBehaviour
                 }
             }
         }
-        else if (currentConstructData is ForgeData forgeData)
+        else if (currentConstructData is MortarData mortarData)
         {
-            // Placeholder for Forge logic (e.g., applying buffs in an area)
+            // Placeholder for Mortar logic (e.g., applying buffs in an area)
         }
 
         visuals.UpdateUnitCount(Mathf.FloorToInt(UnitCount));
@@ -347,6 +354,43 @@ public class ConstructController : MonoBehaviour
         visuals.UpdateUnitCapacity(UnitCount, currentConstructData);
         checkUpgradeIndicator();
     }
+
+    public void ReceiveMortarProjectile(MortarData mortarData)
+    {
+        int UnitLoss = Mathf.FloorToInt(mortarData.KillPercentage * UnitCount);
+        
+        if (UnitLoss == 0 && UnitCount > 0)
+        {
+            UnitLoss = 1;
+        }
+        
+        if (UnitLoss > 0)
+        {
+            UnitCount -= UnitLoss;
+            visuals.UpdateUnitCapacity(UnitCount, currentConstructData);
+            checkUpgradeIndicator();
+        }
+        
+        float randomChance = UnityEngine.Random.Range(0f, 1f);
+        if (randomChance < mortarData.DowngradeChance && currentConstructData.downgradedVersion != null && !isUpgrading)
+        {
+            ConstructData newStateData = currentConstructData.downgradedVersion;
+            currentConstructData = newStateData;
+            visuals.ConstructChange(newStateData, true, Owner.factionColor);
+            
+            if (isMouseOver) OnMouseEnter();
+            UpdateVisualsForOwner();
+        }
+        else if (randomChance < mortarData.DowngradeChance && currentConstructData.downgradedVersion != null &&
+                 isUpgrading)
+        {
+            ConstructData newStateData;
+            CancelInvoke("upgradeConstruct");
+            newStateData = currentConstructData; 
+            currentConstructData = newStateData;
+            visuals.ConstructChange(newStateData, true, Owner.factionColor);
+        }
+    }
     
     public void AttemptUpgrade()
     {
@@ -380,6 +424,49 @@ public class ConstructController : MonoBehaviour
     {
         currentConstructData = currentConstructData.upgradedVersion;
         isUpgrading = false;
+        
+        visuals.UpdateUnitCapacity(UnitCount, currentConstructData);
+        checkUpgradeIndicator();
+    }
+    
+    public void FireMortarAt(ConstructController target)
+    {
+        if (this.currentConstructData is MortarData)
+        {
+            MortarData mortarData = (MortarData)this.currentConstructData;
+            GameObject newMortarProjectile = Instantiate(mortarProjectile, transform.position, Quaternion.identity);
+            mortarProjectileController projectileController = newMortarProjectile.GetComponent<mortarProjectileController>();
+            projectileController.mortarData = mortarData;
+            projectileController.targetNode = target;
+
+            // Debug.Log($"Fired mortar at {target.name} from {name}.");
+        }
+        else
+        {
+            // Debug.LogWarning("Attempted to fire a mortar from a non-mortar construct.");
+        }
+    }
+
+    private void OnMouseDown()
+    {
+        if (InputManager.Instance.IsSelecting)
+        {
+            return;
+        }
+
+        if (InputManager.Instance.MortarAwaitingTarget != null)
+        {
+            ConstructController firingMortar = InputManager.Instance.MortarAwaitingTarget;
+            if (this.Owner != firingMortar.Owner)
+            {
+                firingMortar.FireMortarAt(this);
+            }
+            InputManager.Instance.ClearMortarTargeting();
+        }
+        else if (currentConstructData is MortarData && this.Owner == GameManager.Instance.playerFaction)
+        {
+            InputManager.Instance.SetMortarForTargeting(this);
+        }
     }
     
     private void UpdateVisualsForOwner()
@@ -399,15 +486,21 @@ public class ConstructController : MonoBehaviour
         {
             visuals.UpdateSelectionColor(Color.white);
             visuals.UpdateSelection(true);
+            
+            arrowInstance.gameObject.SetActive(false);
         }
         else if (isMouseOver)
         {
             visuals.UpdateSelectionColor(Color.grey);
             visuals.UpdateSelection(true);
+            
+            arrowInstance.gameObject.SetActive(false);
         }
         else
         {
             visuals.UpdateSelection(false);
+            
+            arrowInstance.gameObject.SetActive(false);
         }
     }
     private void checkUpgradeIndicator()
@@ -444,8 +537,12 @@ public class ConstructController : MonoBehaviour
             {
                 if (InputManager.Instance.startNode != this)
                 {
-                    visuals.UpdateSelectionColor(Color.green);
-                    visuals.UpdateSelection(true);
+                    //visuals.UpdateSelectionColor(Color.green);
+                    //visuals.UpdateSelection(true);
+                    
+                    arrowInstance.gameObject.SetActive(true);
+                    arrowInstance.archHeight = 0;
+                    arrowInstance.SetPoints(InputManager.Instance.startNode.transform.position, this.transform.position);
                 }
             }
             else
@@ -456,8 +553,18 @@ public class ConstructController : MonoBehaviour
         }
         else if (InputManager.Instance.IsSelecting)
         {
-            visuals.UpdateSelectionColor(Color.red);
-            visuals.UpdateSelection(true);
+            //visuals.UpdateSelectionColor(Color.red);
+            //visuals.UpdateSelection(true);
+            
+            arrowInstance.gameObject.SetActive(true);
+            arrowInstance.archHeight = 0;
+            arrowInstance.SetPoints(InputManager.Instance.startNode.transform.position, this.transform.position);
+        }
+        else if (InputManager.Instance.MortarAwaitingTarget != null)
+        {
+            arrowInstance.gameObject.SetActive(true);
+            arrowInstance.archHeight = 25;
+            arrowInstance.SetPoints(InputManager.Instance.MortarAwaitingTarget.transform.position, this.transform.position);
         }
     }
     private void OnMouseExit()
@@ -467,6 +574,8 @@ public class ConstructController : MonoBehaviour
         if (!InputManager.Instance.IsSelecting || (InputManager.Instance.IsSelecting && InputManager.Instance.startNode != this))
         {
             visuals.UpdateSelection(false);
+            
+            arrowInstance.gameObject.SetActive(false);
         }
     }
 }

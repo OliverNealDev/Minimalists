@@ -21,17 +21,22 @@ public class UnitController : MonoBehaviour
     void Start()
     {
         GameManager.Instance.registerUnit(this);
+        
+        isUsingNavMesh = true;
+        navMeshAgent.enabled = true;
+        navMeshAgent.SetDestination(target.transform.position);
+        
     }
 
     void Update()
     {
         if (target == null) return;
         
-        if (!isUsingNavMesh)
+        /*if (!isUsingNavMesh)
         {
             transform.position = Vector3.MoveTowards(transform.position, target.transform.position, moveSpeed * Time.deltaTime);
             transform.position = new Vector3(transform.position.x, 0.68125f, transform.position.z);
-        }
+        }*/
 
         if (Vector3.Distance(transform.position, target.transform.position) < 0.2f)
         {
@@ -51,7 +56,7 @@ public class UnitController : MonoBehaviour
         GetComponent<MeshRenderer>().material.color = owner.factionColor;
         navMeshAgent.enabled = false;
 
-        StartCoroutine(ProximityCheckRoutine());
+        //StartCoroutine(ProximityCheckRoutine());
     }
 
     public void OnShot()
@@ -64,21 +69,21 @@ public class UnitController : MonoBehaviour
     {
         while (true)
         {
-            bool closeToTargetOrSpawn = Vector3.Distance(transform.position, target.transform.position) < 1f || 
-                                         Vector3.Distance(transform.position, spawnConstruct.transform.position) < 0.5f;;
+            bool closeToTarget = Vector3.Distance(transform.position, target.transform.position) < 1f;
+            bool closeToSpawn = Vector3.Distance(transform.position, spawnConstruct.transform.position) < 1f;
             
-            if (!closeToTargetOrSpawn && !isUsingNavMesh)
+            if (!closeToTarget && !isUsingNavMesh)
             {
                 isUsingNavMesh = true;
                 navMeshAgent.enabled = true;
                 navMeshAgent.SetDestination(target.transform.position);
             }
-            else if (closeToTargetOrSpawn && isUsingNavMesh)
+            else if (closeToTarget && isUsingNavMesh)
             {
                 isUsingNavMesh = false;
                 navMeshAgent.enabled = false;
             }
-
+            
             yield return new WaitForSeconds(1f / 20f);
         }
     }

@@ -134,9 +134,23 @@ public class ConstructVisuals : MonoBehaviour
         StartCoroutine(AnimateScale(time, constructData));
     }
     
+    void calibrateVisuals()
+    {
+        if (nodeConstruct == null) return;
+
+        nodeConstruct.transform.localScale = originalScale;
+        Destroy(nodeConstruct);
+        nodeConstruct = Instantiate(GetComponent<ConstructController>().currentConstructData.visualPrefab, transform.position, Quaternion.identity);
+        nodeConstruct.transform.parent = transform;
+        SetMeshRenderers();
+        UpdateColor(lastKnownColor);
+    }
+    
     public void ConstructChange(ConstructData constructData, bool isAnimated, Color newConstructColor)
     {
         StopAllCoroutines(); // was in isUpgrading but house didnt visually upgrade once
+        calibrateVisuals();
+        
         if (isUpgrading)
         {
             nodeConstruct.transform.localScale = originalScale;

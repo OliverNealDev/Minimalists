@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[ExecuteInEditMode]
 [RequireComponent(typeof(RectTransform))]
 public class NodeUIController : MonoBehaviour
 {
