@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.AI;
 using System.Collections;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(NavMeshAgent))]
 public class UnitController : MonoBehaviour
@@ -37,11 +38,21 @@ public class UnitController : MonoBehaviour
             navMeshAgent.enabled = false;
             moveSpeed *= 1.5f; // Increase speed for helicopters
             StartCoroutine(HelicopterFlightRoutine());
+            
+            foreach (MeshRenderer renderer in transform.GetChild(1).GetComponentsInChildren<MeshRenderer>())
+            {
+                renderer.material.color = owner.factionColor;
+            }
         }
         else
         {
             navMeshAgent.enabled = true;
             navMeshAgent.SetDestination(target.transform.position);
+            
+            foreach (MeshRenderer renderer in transform.GetChild(0).GetComponentsInChildren<MeshRenderer>())
+            {
+                renderer.material.color = owner.factionColor;
+            }
         }
     }
 
@@ -100,8 +111,11 @@ public class UnitController : MonoBehaviour
             float t = timer / transitionDuration;
             Vector3 newPos = CalculateQuadraticBezierPoint(t, p0_takeoff, p1_takeoff, p2_takeoff);
             
-            if ((newPos - transform.position).sqrMagnitude > 0.001f)
-                transform.rotation = Quaternion.LookRotation(newPos - transform.position);
+            /*if ((newPos - transform.position).sqrMagnitude > 0.001f)
+                transform.rotation = Quaternion.LookRotation(newPos - transform.position);*/
+            
+            Vector3 cruiseTargetPos = new Vector3(target.transform.position.x, transform.position.y, target.transform.position.z);
+            transform.LookAt(cruiseTargetPos);
             
             transform.position = newPos;
             timer += Time.deltaTime;
