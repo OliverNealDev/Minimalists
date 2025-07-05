@@ -101,6 +101,8 @@ public class CameraController : MonoBehaviour
             return;
         }
 
+        if ((Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) && Input.GetKey(KeyCode.A)) return;
+
         Vector3 right = Vector3.ProjectOnPlane(transform.right, Vector3.up).normalized;
         Vector3 forward = Vector3.ProjectOnPlane(transform.forward, Vector3.up).normalized;
         Vector3 moveDirection = (right * horizontalInput + forward * verticalInput).normalized;

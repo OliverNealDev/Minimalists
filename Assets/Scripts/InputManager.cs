@@ -1,10 +1,23 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEngine.UIElements;
+using Button = UnityEngine.UI.Button;
 
 public class InputManager : MonoBehaviour
 {
     public static InputManager Instance;
+
+    public Button houseButton;
+    public Button towerButton;
+    public Button helipadButton;
+    public Button upgradeButton;
+    public Button evenButton;
+
+    public HouseData house1Data;
+    public TurretData turret1Data;
+    public HelipadData helipad1Data;
     
     public LayerMask constructLayer;
     public float doubleClickThreshold = 0.25f;
@@ -70,6 +83,19 @@ public class InputManager : MonoBehaviour
             UpgradeSelectedNodes();
         }
         
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            ConvertSelectedNodes("House");
+        }
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            ConvertSelectedNodes("Turret");
+        }
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            ConvertSelectedNodes("Helipad");
+        }
+        
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             UnselectAllNodes();
@@ -78,6 +104,11 @@ public class InputManager : MonoBehaviour
 
     private void HandleLeftClick()
     {
+        if (IsPointerOverUIWithTag("UIBlocker"))
+        {
+            return; // Exit the method if a blocking UI element was clicked
+        }
+        
         RaycastHit hit;
         Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
 
@@ -196,7 +227,45 @@ public class InputManager : MonoBehaviour
             node.CheckHighlight();
         }
     }
+    
+    private void ConvertSelectedNodes(string constructType)
+    {
+        foreach (ConstructController c in SelectedNodes)
+        {
+            if (c.currentConstructData is not HouseData && constructType == "House")
+            {
+                c.AttemptConvertConstruct(house1Data);
+            }
+            else if (c.currentConstructData is not TurretData && constructType == "Turret")
+            {
+                c.AttemptConvertConstruct(turret1Data);
+            }
+            else if (c.currentConstructData is not HelipadData && constructType == "Helipad")
+            {
+                c.AttemptConvertConstruct(helipad1Data);
+            }
+        }
+    }
 
+    private bool IsPointerOverUIWithTag(string tag)
+    {
+        PointerEventData eventData = new PointerEventData(EventSystem.current);
+        eventData.position = Input.mousePosition;
+    
+        List<RaycastResult> results = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(eventData, results);
+    
+        foreach (RaycastResult result in results)
+        {
+            if (result.gameObject.CompareTag(tag))
+            {
+                return true;
+            }
+        }
+    
+        return false;
+    }
+    
     /*private void HandleSelectionStart(ConstructController clickedNode)
     {
         timeSinceLastClick = 0;

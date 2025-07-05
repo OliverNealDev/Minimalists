@@ -302,7 +302,7 @@ MonoBehaviour:
   isHelicopter: 0
   cruiseHeight: 1
   transitionDistance: 1
-  transitionDuration: 1.166667
+  transitionDuration: 0.87500024
   landingApproachDistance: 1
 --- !u!195 &-7018981488714828134
 NavMeshAgent:

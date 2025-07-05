@@ -31,6 +31,8 @@ public class ConstructController : MonoBehaviour
     
     public ConstructData currentConstructData;
     private bool isUpgrading = false;
+    private bool isConverting = false;
+    private ConstructData convertingConstructData;
     public ConstructVisuals visuals;
     private float unitGenerationBuffer = 0f;
     private float shootCooldownBuffer = 0f;
@@ -336,6 +338,12 @@ public class ConstructController : MonoBehaviour
                 UnitCount = 1;
                 
                 StopAllCoroutines();
+                CancelInvoke();
+                if (isConverting)
+                {
+                    isConverting = false;
+                    convertingConstructData = null;
+                }
                 targetConstructs.Clear();
                 
                 ConstructData newStateData;
@@ -346,7 +354,7 @@ public class ConstructController : MonoBehaviour
                 }
                 else
                 {
-                    if (isUpgrading) CancelInvoke("upgradeConstruct");
+                    //if (isUpgrading) CancelInvoke("upgradeConstruct");
                     newStateData = currentConstructData; 
                 }
                 
@@ -363,53 +371,15 @@ public class ConstructController : MonoBehaviour
         visuals.UpdateUnitCapacity(UnitCount, currentConstructData);
         checkUpgradeIndicator();
     }
-
-    /*public void ReceiveMortarProjectile(MortarData mortarData)
-    {
-        int UnitLoss = Mathf.FloorToInt(mortarData.KillPercentage * UnitCount);
-        
-        if (UnitLoss == 0 && UnitCount > 0)
-        {
-            UnitLoss = 1;
-        }
-        
-        if (UnitLoss > 0)
-        {
-            UnitCount -= UnitLoss;
-            visuals.UpdateUnitCapacity(UnitCount, currentConstructData);
-            checkUpgradeIndicator();
-        }
-        
-        float randomChance = UnityEngine.Random.Range(0f, 1f);
-        if (randomChance < mortarData.DowngradeChance && currentConstructData.downgradedVersion != null && !isUpgrading)
-        {
-            ConstructData newStateData = currentConstructData.downgradedVersion;
-            currentConstructData = newStateData;
-            visuals.ConstructChange(newStateData, true, Owner.factionColor);
-            
-            //if (isMouseOver) OnMouseEnter();
-            UpdateVisualsForOwner();
-        }
-        else if (randomChance < mortarData.DowngradeChance && currentConstructData.downgradedVersion != null &&
-                 isUpgrading)
-        {
-            ConstructData newStateData;
-            CancelInvoke("upgradeConstruct");
-            newStateData = currentConstructData; 
-            currentConstructData = newStateData;
-            visuals.ConstructChange(newStateData, true, Owner.factionColor);
-        }
-    }*/
     
     public void AttemptUpgrade()
     {
         if (currentConstructData.upgradedVersion == null)
         {
-            //Debug.Log("This construct is at its maximum level.");
             return;
         }
         
-        if (isUpgrading) return;
+        if (isUpgrading || isConverting) return;
 
         if (UnitCount >= currentConstructData.upgradeCost)
         {
@@ -418,7 +388,7 @@ public class ConstructController : MonoBehaviour
             visuals.UpdateUnitCapacity(UnitCount, currentConstructData);
             ConstructData newConstructData = currentConstructData.upgradedVersion;
             visuals.UpgradeScale(currentConstructData.upgradeTime, newConstructData);
-            Invoke("UpgradeConstruct", currentConstructData.upgradeTime);
+            Invoke("UpgradeConstruct", currentConstructData.upgradeTime + 0.4f);
             isUpgrading = true;
             checkUpgradeIndicator();
             
@@ -437,24 +407,34 @@ public class ConstructController : MonoBehaviour
         visuals.UpdateUnitCapacity(UnitCount, currentConstructData);
         checkUpgradeIndicator();
     }
-    
-    /*public void FireMortarAt(ConstructController target)
-    {
-        if (this.currentConstructData is MortarData)
-        {
-            MortarData mortarData = (MortarData)this.currentConstructData;
-            GameObject newMortarProjectile = Instantiate(mortarProjectile, transform.position, Quaternion.identity);
-            mortarProjectileController projectileController = newMortarProjectile.GetComponent<mortarProjectileController>();
-            projectileController.mortarData = mortarData;
-            projectileController.targetNode = target;
 
-            // Debug.Log($"Fired mortar at {target.name} from {name}.");
-        }
-        else
+    public void AttemptConvertConstruct(ConstructData constructData)
+    {
+        if (isUpgrading || isConverting) return;
+        
+        if (UnitCount >= constructData.conversionCost)
         {
-            // Debug.LogWarning("Attempted to fire a mortar from a non-mortar construct.");
+            UnitCount -= constructData.conversionCost;
+            visuals.UpdateUnitCapacity(UnitCount, currentConstructData);
+            
+            visuals.UpgradeScale(constructData.conversionTime, constructData);
+            convertingConstructData = constructData;
+            Invoke("ConvertConstruct", constructData.conversionTime + 0.4f);
+            isConverting = true;
+            //UpdateVisualsForOwner();
+            checkUpgradeIndicator();
         }
-    }*/
+    }
+
+    private void ConvertConstruct()
+    {
+        currentConstructData = convertingConstructData;
+        isConverting = false;
+        convertingConstructData = null;
+        
+        visuals.UpdateUnitCapacity(UnitCount, currentConstructData);
+        checkUpgradeIndicator();
+    }
     
     private void UpdateVisualsForOwner()
     {
@@ -470,30 +450,6 @@ public class ConstructController : MonoBehaviour
         }
     }
     
-    /*public void SetSelected(bool isSelected)
-    {
-        if (isSelected)
-        {
-            visuals.UpdateSelectionColor(Color.white);
-            visuals.UpdateSelection(true);
-            
-            arrowInstance.gameObject.SetActive(false);
-        }
-        else if (isMouseOver)
-        {
-            visuals.UpdateSelectionColor(Color.grey);
-            visuals.UpdateSelection(true);
-            
-            arrowInstance.gameObject.SetActive(false);
-        }
-        else
-        {
-            visuals.UpdateSelection(false);
-            
-            arrowInstance.gameObject.SetActive(false);
-        }
-    }*/
-    
     private void checkUpgradeIndicator()
     {
         if (currentConstructData == null) return;
@@ -502,7 +458,8 @@ public class ConstructController : MonoBehaviour
             !visuals.isUpgradeIndicatorVisible && 
             UnitCount >= currentConstructData.upgradeCost && 
             Owner.factionName == "Player" && 
-            !isUpgrading)
+            !isUpgrading &&
+            !isConverting)
         {
             visuals.setUpgradeIndicatorVisibility(true);
             Debug.Log("Upgrade indicator is now visible for " + currentConstructData.constructName);
@@ -511,7 +468,8 @@ public class ConstructController : MonoBehaviour
                  visuals.isUpgradeIndicatorVisible && 
                  UnitCount < currentConstructData.upgradeCost && 
                  Owner.factionName == "Player") || 
-                 isUpgrading)
+                 isUpgrading ||
+                 isConverting)
         {
             visuals.setUpgradeIndicatorVisibility(false);
             Debug.Log("Upgrade indicator is now hidden for " + currentConstructData.constructName);
@@ -556,34 +514,6 @@ public class ConstructController : MonoBehaviour
             }
         }
     }
-    
-    
-    /*private void OnMouseDown()
-    {
-        if (InputManager.Instance.IsSelecting)
-        {
-            return;
-        }
-
-        if (InputManager.Instance.MortarAwaitingTarget != null)
-        {
-            ConstructController firingMortar = InputManager.Instance.MortarAwaitingTarget;
-            if (this.Owner != firingMortar.Owner)
-            {
-                firingMortar.FireMortarAt(this);
-                
-                MortarProceduralArrow arrowOnMortar = firingMortar.GetComponent<MortarProceduralArrow>();
-                if (arrowOnMortar != null) arrowOnMortar.target = null;
-
-            }
-            InputManager.Instance.ClearMortarTargeting();
-        }
-        else if (currentConstructData is MortarData && this.Owner == GameManager.Instance.playerFaction)
-        {
-            InputManager.Instance.SetMortarForTargeting(this);
-        }
-    }*/
-    
     
     private void OnMouseExit()
     {

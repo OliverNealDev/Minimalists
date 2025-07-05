@@ -36,7 +36,7 @@ public class UnitController : MonoBehaviour
             transform.GetChild(0).gameObject.SetActive(false);
             transform.GetChild(1).gameObject.SetActive(true);
             navMeshAgent.enabled = false;
-            moveSpeed *= 1.5f; // Increase speed for helicopters
+            moveSpeed *= 2f; // Increase speed for helicopters
             StartCoroutine(HelicopterFlightRoutine());
             
             foreach (MeshRenderer renderer in transform.GetChild(1).GetComponentsInChildren<MeshRenderer>())

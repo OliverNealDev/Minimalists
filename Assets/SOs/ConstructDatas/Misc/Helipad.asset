@@ -18,3 +18,5 @@ MonoBehaviour:
   upgradeTime: 0
   upgradedVersion: {fileID: 0}
   downgradedVersion: {fileID: 0}
+  conversionCost: 20
+  conversionTime: 12

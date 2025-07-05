@@ -648,7 +648,7 @@ GameObject:
   - component: {fileID: 149016131}
   m_Layer: 5
   m_Name: UpgradeButton
-  m_TagString: Untagged
+  m_TagString: UIBlocker
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1245,7 +1245,7 @@ GameObject:
   - component: {fileID: 263127523}
   m_Layer: 5
   m_Name: EvenButton
-  m_TagString: Untagged
+  m_TagString: UIBlocker
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2303,6 +2303,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6446436019bcaf8428afed7a58d1b8d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  houseButton: {fileID: 677981051}
+  towerButton: {fileID: 763539539}
+  helipadButton: {fileID: 1528012098}
+  upgradeButton: {fileID: 149016131}
+  evenButton: {fileID: 263127523}
+  house1Data: {fileID: 11400000, guid: f844d63033ecc324fab0a2cbd01bdd3d, type: 2}
+  turret1Data: {fileID: 11400000, guid: 4dbadb008c9719349a78b95f291fef8d, type: 2}
+  helipad1Data: {fileID: 11400000, guid: 39cd2467ac8a36544b892b9549f6a92e, type: 2}
   constructLayer:
     serializedVersion: 2
     m_Bits: 128
@@ -4564,7 +4572,7 @@ GameObject:
   - component: {fileID: 677981051}
   m_Layer: 5
   m_Name: HouseButton
-  m_TagString: Untagged
+  m_TagString: UIBlocker
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4937,7 +4945,7 @@ GameObject:
   - component: {fileID: 763539539}
   m_Layer: 5
   m_Name: TowerButton
-  m_TagString: Untagged
+  m_TagString: UIBlocker
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -6850,7 +6858,7 @@ GameObject:
   - component: {fileID: 1145112830}
   m_Layer: 5
   m_Name: Panel
-  m_TagString: Untagged
+  m_TagString: UIBlocker
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -9039,7 +9047,7 @@ GameObject:
   - component: {fileID: 1528012098}
   m_Layer: 5
   m_Name: HelipadButton
-  m_TagString: Untagged
+  m_TagString: UIBlocker
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
