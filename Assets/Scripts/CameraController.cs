@@ -25,6 +25,12 @@ public class CameraController : MonoBehaviour
     private float currentRotationY = 0f;
     private float targetOrthographicSize = 0f;
     private Vector3 lastMousePosition;
+    
+    [Header("ToggleEnable")]
+    public bool enableWASDMovement = true;
+    public bool enableDragMovement = true;
+    public bool enableRotation = true;
+    public bool enableZoom = true;
 
     void Awake()
     {
@@ -49,28 +55,34 @@ public class CameraController : MonoBehaviour
 
     void LateUpdate()
     {
-        HandleDragMovement();
-        HandleWASDMovement();
-        UpdateZoom();
-        UpdateRotation();
+        if (enableDragMovement) HandleDragMovement();
+        if (enableWASDMovement) HandleWASDMovement();
+        if (enableZoom) UpdateZoom();
+        if (enableRotation) UpdateRotation();
     }
     
     private void HandleInput()
     {
-        if (Input.GetKeyDown(KeyCode.E))
+        if (enableRotation)
         {
-            targetRotationY += rotationAngle;
-        }
-        else if (Input.GetKeyDown(KeyCode.Q))
-        {
-            targetRotationY -= rotationAngle;
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                targetRotationY += rotationAngle;
+            }
+            else if (Input.GetKeyDown(KeyCode.Q))
+            {
+                targetRotationY -= rotationAngle;
+            }
         }
 
-        float scrollInput = Input.GetAxis("Mouse ScrollWheel");
-        if (scrollInput != 0f)
+        if (enableZoom)
         {
-            targetOrthographicSize -= scrollInput * zoomSpeed;
-            targetOrthographicSize = Mathf.Clamp(targetOrthographicSize, minOrthographicSize, maxOrthographicSize);
+            float scrollInput = Input.GetAxis("Mouse ScrollWheel");
+            if (scrollInput != 0f)
+            {
+                targetOrthographicSize -= scrollInput * zoomSpeed;
+                targetOrthographicSize = Mathf.Clamp(targetOrthographicSize, minOrthographicSize, maxOrthographicSize);
+            }
         }
 
         if (Input.GetMouseButtonDown(1))

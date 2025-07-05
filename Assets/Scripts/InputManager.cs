@@ -65,7 +65,7 @@ public class InputManager : MonoBehaviour
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.U))
+        if (Input.GetKeyDown(KeyCode.F))
         {
             UpgradeSelectedNodes();
         }
@@ -181,7 +181,7 @@ public class InputManager : MonoBehaviour
         }
     }
 
-    private void UpgradeSelectedNodes()
+    public void UpgradeSelectedNodes()
     {
         foreach (ConstructController c in SelectedNodes)
         {
