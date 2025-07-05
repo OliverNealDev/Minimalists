@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
@@ -81,6 +82,11 @@ public class InputManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.F))
         {
             UpgradeSelectedNodes();
+        }
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            EvenOutUnitCounts();
         }
         
         if (Input.GetKeyDown(KeyCode.Q))
@@ -228,7 +234,7 @@ public class InputManager : MonoBehaviour
         }
     }
     
-    private void ConvertSelectedNodes(string constructType)
+    public void ConvertSelectedNodes(string constructType)
     {
         foreach (ConstructController c in SelectedNodes)
         {
@@ -243,6 +249,78 @@ public class InputManager : MonoBehaviour
             else if (c.currentConstructData is not HelipadData && constructType == "Helipad")
             {
                 c.AttemptConvertConstruct(helipad1Data);
+            }
+        }
+    }
+    
+    public void EvenOutUnitCounts()
+    {
+        // Ensure there are at least two nodes selected to balance between.
+        if (SelectedNodes.Count < 2)
+        {
+            return;
+        }
+
+        // --- 1. Calculate Total and Target Distribution ---
+        int totalUnits = SelectedNodes.Sum(node => node.UnitCount);
+        int nodeCount = SelectedNodes.Count;
+        int baseUnitCount = totalUnits / nodeCount;
+        int remainder = totalUnits % nodeCount;
+
+        // --- 2. Identify Givers and Receivers ---
+        var givers = new List<ConstructController>();
+        var receivers = new List<ConstructController>();
+        var promisedUnits = new Dictionary<ConstructController, int>();
+
+        // Create a sorted list to distribute the remainder deterministically.
+        List<ConstructController> sortedNodes = SelectedNodes.OrderBy(n => n.GetInstanceID()).ToList();
+
+        foreach (var node in sortedNodes)
+        {
+            int targetCount = baseUnitCount;
+            if (remainder > 0)
+            {
+                targetCount++;
+                remainder--;
+            }
+
+            int difference = node.UnitCount - targetCount;
+
+            if (difference > 0)
+            {
+                givers.Add(node);
+                promisedUnits.Add(node, difference); // This node has a surplus of units.
+            }
+            else if (difference < 0)
+            {
+                receivers.Add(node);
+                promisedUnits.Add(node, difference); // This node has a deficit of units.
+            }
+        }
+
+        // --- 3. Execute the Transfers ---
+        foreach (var receiver in receivers)
+        {
+            int unitsNeeded = -promisedUnits[receiver]; // Get the positive deficit value.
+
+            foreach (var giver in givers)
+            {
+                if (unitsNeeded <= 0) break; // Stop if the receiver's needs are met.
+
+                int unitsAvailable = promisedUnits[giver];
+                if (unitsAvailable > 0)
+                {
+                    int unitsToSend = Mathf.Min(unitsNeeded, unitsAvailable);
+
+                    if (unitsToSend > 0)
+                    {
+                        giver.SendExactUnits(receiver, unitsToSend);
+
+                        // Update the dictionaries to reflect the sent units.
+                        promisedUnits[giver] -= unitsToSend;
+                        unitsNeeded -= unitsToSend;
+                    }
+                }
             }
         }
     }

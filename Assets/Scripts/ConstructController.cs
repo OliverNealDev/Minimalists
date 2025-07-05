@@ -294,6 +294,35 @@ public class ConstructController : MonoBehaviour
             StartCoroutine(SpawnUnitsRoutine(unitsToSend, target));
         }
     }
+    
+    public void SendExactUnits(ConstructController target, int unitsToSend)
+    {
+        // A node cannot send units to itself.
+        if (target == this || unitsToSend <= 0)
+        {
+            return;
+        }
+        
+        // Prevents sending multiple streams of units to the same target simultaneously.
+        bool isAlreadySending = false;
+        foreach (ConstructController construct in targetConstructs)
+        {
+            if (construct == target)
+            {
+                isAlreadySending = true;
+                break;
+            }
+        }
+        
+        if (isAlreadySending) return;
+        
+        if (UnitCount > 0)
+        {
+            targetConstructs.Add(target);
+            StartCoroutine(SpawnUnitsRoutine(unitsToSend, target));
+        }
+    }
+    
     private IEnumerator SpawnUnitsRoutine(int count, ConstructController target)
     {
         float spawnDelay = 1f / 4f;
