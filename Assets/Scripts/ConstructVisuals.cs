@@ -78,14 +78,15 @@ public class ConstructVisuals : MonoBehaviour
         unitCountText.text = count.ToString();
     }
     
-    public void UpdateSelection(bool isSelected)
+    public void UpdateHighlightVisibility(bool isSelected)
     {
         selectionIndicator.SetActive(isSelected);
     }
     
-    public void UpdateSelectionColor(Color color)
+    public void UpdateHighlightColor(Color color)
     {
         selectionIndicator.GetComponent<Renderer>().material.color = color;
+        selectionIndicator.SetActive(true);
     }
     
     public void UpdateUnitCapacity(float current, ConstructData constructData)
@@ -119,7 +120,7 @@ public class ConstructVisuals : MonoBehaviour
     public void HideVisuals()
     {
         unitCountText.enabled = false;
-        selectionIndicator.SetActive(false);
+        //selectionIndicator.SetActive(false);
         unitCapacitySlider.gameObject.SetActive(false);
     }
     

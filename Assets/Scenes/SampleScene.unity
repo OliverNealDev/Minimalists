@@ -1781,8 +1781,6 @@ MonoBehaviour:
   constructLayer:
     serializedVersion: 2
     m_Bits: 128
-  doubleClickThreshold: 0.25
-  startNode: {fileID: 0}
 --- !u!4 &368886751
 Transform:
   m_ObjectHideFlags: 0
@@ -5160,6 +5158,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 740897772621824650, guid: 6e96fb6bb887e804ab55538b02703fef, type: 3}
       propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 793423625032876467, guid: 6e96fb6bb887e804ab55538b02703fef, type: 3}
+      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1551507357265674433, guid: 6e96fb6bb887e804ab55538b02703fef, type: 3}

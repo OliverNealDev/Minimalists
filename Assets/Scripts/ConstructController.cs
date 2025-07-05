@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 
@@ -352,7 +353,9 @@ public class ConstructController : MonoBehaviour
                 currentConstructData = newStateData;
                 visuals.ConstructChange(newStateData, true, Owner.factionColor);
                 
-                if (isMouseOver) OnMouseEnter();
+                //if (isMouseOver) OnMouseEnter();
+                InputManager.Instance.UnselectNode(this);
+                visuals.UpdateHighlightVisibility(false);
                 UpdateVisualsForOwner();
             }
         }
@@ -361,7 +364,7 @@ public class ConstructController : MonoBehaviour
         checkUpgradeIndicator();
     }
 
-    public void ReceiveMortarProjectile(MortarData mortarData)
+    /*public void ReceiveMortarProjectile(MortarData mortarData)
     {
         int UnitLoss = Mathf.FloorToInt(mortarData.KillPercentage * UnitCount);
         
@@ -384,7 +387,7 @@ public class ConstructController : MonoBehaviour
             currentConstructData = newStateData;
             visuals.ConstructChange(newStateData, true, Owner.factionColor);
             
-            if (isMouseOver) OnMouseEnter();
+            //if (isMouseOver) OnMouseEnter();
             UpdateVisualsForOwner();
         }
         else if (randomChance < mortarData.DowngradeChance && currentConstructData.downgradedVersion != null &&
@@ -396,7 +399,7 @@ public class ConstructController : MonoBehaviour
             currentConstructData = newStateData;
             visuals.ConstructChange(newStateData, true, Owner.factionColor);
         }
-    }
+    }*/
     
     public void AttemptUpgrade()
     {
@@ -435,7 +438,7 @@ public class ConstructController : MonoBehaviour
         checkUpgradeIndicator();
     }
     
-    public void FireMortarAt(ConstructController target)
+    /*public void FireMortarAt(ConstructController target)
     {
         if (this.currentConstructData is MortarData)
         {
@@ -451,20 +454,23 @@ public class ConstructController : MonoBehaviour
         {
             // Debug.LogWarning("Attempted to fire a mortar from a non-mortar construct.");
         }
-    }
+    }*/
     
     private void UpdateVisualsForOwner()
     {
         if (Owner.factionName == "Player" || Owner.factionName == "Unclaimed")
         {
             visuals.ShowVisuals();
+            if (isMouseOver) visuals.UpdateHighlightColor(Color.grey);
         }
         else
         {
             visuals.HideVisuals();
+            if (isMouseOver && InputManager.Instance.SelectedNodes.Count > 0) visuals.UpdateHighlightColor(Color.red);
         }
     }
-    public void SetSelected(bool isSelected)
+    
+    /*public void SetSelected(bool isSelected)
     {
         if (isSelected)
         {
@@ -486,7 +492,8 @@ public class ConstructController : MonoBehaviour
             
             arrowInstance.gameObject.SetActive(false);
         }
-    }
+    }*/
+    
     private void checkUpgradeIndicator()
     {
         if (currentConstructData == null) return;
@@ -517,51 +524,41 @@ public class ConstructController : MonoBehaviour
         
         if (Owner.factionName == "Player")
         {
-            if (InputManager.Instance.IsSelecting)
+            if (!InputManager.Instance.SelectedNodes.Contains(this))
             {
-                if (InputManager.Instance.startNode != this)
+                visuals.UpdateHighlightColor(Color.grey);
+            }
+        }
+        else if (InputManager.Instance.SelectedNodes.Count > 0)
+        {
+            visuals.UpdateHighlightColor(Color.red);
+        }
+    }
+
+    public void CheckHighlight()
+    {
+        if (isMouseOver)
+        {
+            if (Owner.factionName == "Player")
+            {
+                if (!InputManager.Instance.SelectedNodes.Contains(this))
                 {
-                    //visuals.UpdateSelectionColor(Color.green);
-                    //visuals.UpdateSelection(true);
-                    
-                    arrowInstance.gameObject.SetActive(true);
-                    arrowInstance.archHeight = 0;
-                    arrowInstance.SetPoints(InputManager.Instance.startNode.transform.position, this.transform.position);
+                    visuals.UpdateHighlightColor(Color.grey);
                 }
+            }
+            else if (InputManager.Instance.SelectedNodes.Count > 0)
+            {
+                visuals.UpdateHighlightColor(Color.red);
             }
             else
             {
-                visuals.UpdateSelectionColor(Color.grey);
-                visuals.UpdateSelection(true);
-            }
-        }
-        else if (InputManager.Instance.IsSelecting)
-        {
-            //visuals.UpdateSelectionColor(Color.red);
-            //visuals.UpdateSelection(true);
-            
-            arrowInstance.gameObject.SetActive(true);
-            arrowInstance.archHeight = 0;
-            arrowInstance.SetPoints(InputManager.Instance.startNode.transform.position, this.transform.position);
-        }
-        // --- CORRECTED MORTAR LOGIC ---
-        else if (InputManager.Instance.MortarAwaitingTarget != null)
-        {
-            ConstructController firingMortar = InputManager.Instance.MortarAwaitingTarget;
-            if (this.Owner != firingMortar.Owner)
-            {
-                // 1. Get the arrow script FROM THE FIRING MORTAR.
-                MortarProceduralArrow arrowOnMortar = firingMortar.GetComponent<MortarProceduralArrow>();
-
-                // 2. If the mortar has the script, tell it to target THIS building.
-                if (arrowOnMortar != null)
-                {
-                    arrowOnMortar.target = this.transform;
-                }
+                visuals.UpdateHighlightVisibility(false);
             }
         }
     }
-    private void OnMouseDown()
+    
+    
+    /*private void OnMouseDown()
     {
         if (InputManager.Instance.IsSelecting)
         {
@@ -585,34 +582,16 @@ public class ConstructController : MonoBehaviour
         {
             InputManager.Instance.SetMortarForTargeting(this);
         }
-    }
+    }*/
+    
+    
     private void OnMouseExit()
     {
         isMouseOver = false;
-
-        // This is the original, correct condition for hiding the regular selection visuals and arrow.
-        // It hides them if you are not selecting, OR if you are selecting and move off a potential target.
-        if (!InputManager.Instance.IsSelecting || (InputManager.Instance.IsSelecting && InputManager.Instance.startNode != this))
-        {
-            visuals.UpdateSelection(false);
-            if(arrowInstance != null)
-            {
-                arrowInstance.gameObject.SetActive(false);
-            }
-        }
-
-        // This is the new, correct logic for hiding the mortar arrow.
-        // This needs to run independently of the regular selection state.
-        if (InputManager.Instance.MortarAwaitingTarget != null)
-        {
-            // Get the arrow script FROM THE FIRING MORTAR, not this building.
-            MortarProceduralArrow arrowOnMortar = InputManager.Instance.MortarAwaitingTarget.GetComponent<MortarProceduralArrow>();
         
-            // If that arrow component exists, clear its target. Its own Update() loop will handle hiding it.
-            if (arrowOnMortar != null)
-            {
-                arrowOnMortar.target = null;
-            }
+        if (!InputManager.Instance.SelectedNodes.Contains(this))
+        {
+            visuals.UpdateHighlightVisibility(false);
         }
     }
 }
