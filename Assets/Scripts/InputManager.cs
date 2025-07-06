@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using UnityEngine.UIElements;
 using Button = UnityEngine.UI.Button;
+using Slider = UnityEngine.UI.Slider;
 
 public class InputManager : MonoBehaviour
 {
@@ -29,6 +30,8 @@ public class InputManager : MonoBehaviour
     //public ConstructController startNode;
     private ConstructController lastClickedNode;
     private float timeSinceLastClick;
+    
+    public Slider UnitPercentBar;
     
     //public bool IsSelecting => startNode != null;
     
@@ -87,6 +90,20 @@ public class InputManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
             EvenOutUnitCounts();
+        }
+
+        if (Input.mouseScrollDelta.y != 0)
+        {
+            if (Input.mouseScrollDelta.y > 0)
+            {
+                if (UnitPercentBar.value >= 4f) return; // Prevent going above 4 (100%)
+                UnitPercentBar.value += 1f;
+            }
+            else if (Input.mouseScrollDelta.y < 0)
+            {
+                if (UnitPercentBar.value <= 1f) return; // Prevent going below 1 (25%)
+                UnitPercentBar.value -= 1f;
+            }
         }
         
         if (Input.GetKeyDown(KeyCode.Q))
@@ -184,7 +201,7 @@ public class InputManager : MonoBehaviour
                 foreach (ConstructController c in SelectedNodes)
                 {
                     if (c == clickedNode) continue;
-                    c.SendUnits(clickedNode, 0.5f);
+                    c.SendUnits(clickedNode, UnitPercentBar.value / 4);
                 }
             }
         }
@@ -322,6 +339,14 @@ public class InputManager : MonoBehaviour
                     }
                 }
             }
+        }
+    }
+
+    public void onUnitPercentBarValueManuallyChanged()
+    {
+        if (UnitPercentBar.value < 1f)
+        {
+            UnitPercentBar.value = 1f; // Minimum value is 1 (25%)
         }
     }
 
