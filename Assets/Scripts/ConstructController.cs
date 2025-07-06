@@ -373,6 +373,11 @@ public class ConstructController : MonoBehaviour
                     isConverting = false;
                     convertingConstructData = null;
                 }
+
+                if (isUpgrading)
+                {
+                    isUpgrading = false;
+                }
                 targetConstructs.Clear();
                 
                 ConstructData newStateData;
