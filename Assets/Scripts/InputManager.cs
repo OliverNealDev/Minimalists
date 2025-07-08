@@ -76,6 +76,7 @@ public class InputManager : MonoBehaviour
                     {
                         SelectedNodes.Add(node);
                         node.visuals.UpdateHighlightColor(Color.white);
+                        node.DisableHoverGlow();
                     }
                 }
                 CheckNodeHighlights();
@@ -172,6 +173,7 @@ public class InputManager : MonoBehaviour
             {
                 SelectedNodes.Add(clickedNode);
                 clickedNode.visuals.UpdateHighlightColor(Color.white);
+                clickedNode.DisableHoverGlow();
             }
         }
         else

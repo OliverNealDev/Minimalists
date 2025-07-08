@@ -34,6 +34,8 @@ public class ConstructVisuals : MonoBehaviour
     [SerializeField] private GameObject house4Model;
     
     private Color lastKnownColor;
+    
+    private bool isHoverGlowing = false;
 
     void Awake()
     {
@@ -71,6 +73,11 @@ public class ConstructVisuals : MonoBehaviour
         {
             renderer.material.color = color;
         }
+
+        if (GetComponent<ConstructController>().isHoverGlowActive)
+        {
+            HoverGlow(true);
+        }
     }
 
     public void UpdateUnitCount(int count)
@@ -86,7 +93,25 @@ public class ConstructVisuals : MonoBehaviour
     public void UpdateHighlightColor(Color color)
     {
         selectionIndicator.GetComponent<Renderer>().material.color = color;
+        
         selectionIndicator.SetActive(true);
+    }
+    
+    public void HoverGlow(bool shouldGlow)
+    {
+        foreach (MeshRenderer mr in meshRenderers)
+        {
+            if (shouldGlow)
+            {
+                mr.material.color *= 1.5f;
+                isHoverGlowing = true;
+            }
+            else if (!shouldGlow)
+            {
+                mr.material.color /= 1.5f;
+                isHoverGlowing = false;
+            }
+        }
     }
     
     public void UpdateUnitCapacity(float current, ConstructData constructData)

@@ -41,6 +41,7 @@ public class ConstructController : MonoBehaviour
     public GameObject mortarProjectile;
     
     private bool isMouseOver = false;
+    public bool isHoverGlowActive = false;
     
     public ProceduralArrow arrowInstance;
     public MortarProceduralArrow mortarProceduralArrow;
@@ -398,6 +399,11 @@ public class ConstructController : MonoBehaviour
                 //if (isMouseOver) OnMouseEnter();
                 InputManager.Instance.UnselectNode(this);
                 visuals.UpdateHighlightVisibility(false);
+                if (isHoverGlowActive)
+                {
+                    visuals.HoverGlow(false);
+                    isHoverGlowActive = false;
+                }
                 UpdateVisualsForOwner();
             }
         }
@@ -475,7 +481,12 @@ public class ConstructController : MonoBehaviour
         if (Owner.factionName == "Player" || Owner.factionName == "Unclaimed")
         {
             visuals.ShowVisuals();
-            if (isMouseOver) visuals.UpdateHighlightColor(Color.grey);
+            //if (isMouseOver) visuals.UpdateHighlightColor(Color.grey);
+            if (isMouseOver && !isHoverGlowActive)
+            {
+                visuals.HoverGlow(true);
+                isHoverGlowActive = true;
+            }
         }
         else
         {
@@ -518,7 +529,12 @@ public class ConstructController : MonoBehaviour
         {
             if (!InputManager.Instance.SelectedNodes.Contains(this))
             {
-                visuals.UpdateHighlightColor(Color.grey);
+                if (!isHoverGlowActive)
+                {
+                    //visuals.UpdateHighlightColor(Color.grey);
+                    visuals.HoverGlow(true);
+                    isHoverGlowActive = true;
+                }
             }
         }
         else if (InputManager.Instance.SelectedNodes.Count > 0)
@@ -535,7 +551,12 @@ public class ConstructController : MonoBehaviour
             {
                 if (!InputManager.Instance.SelectedNodes.Contains(this))
                 {
-                    visuals.UpdateHighlightColor(Color.grey);
+                    if (!isHoverGlowActive)
+                    {
+                        //visuals.UpdateHighlightColor(Color.grey);
+                        visuals.HoverGlow(true);
+                        isHoverGlowActive = true;
+                    }
                 }
             }
             else if (InputManager.Instance.SelectedNodes.Count > 0)
@@ -548,6 +569,15 @@ public class ConstructController : MonoBehaviour
             }
         }
     }
+
+    public void DisableHoverGlow()
+    {
+        if (isHoverGlowActive)
+        {
+            visuals.HoverGlow(false);
+            isHoverGlowActive = false;
+        }
+    }
     
     private void OnMouseExit()
     {
@@ -556,6 +586,12 @@ public class ConstructController : MonoBehaviour
         if (!InputManager.Instance.SelectedNodes.Contains(this))
         {
             visuals.UpdateHighlightVisibility(false);
+        }
+
+        if (isHoverGlowActive)
+        {
+            visuals.HoverGlow(false);
+            isHoverGlowActive = false;
         }
     }
 }

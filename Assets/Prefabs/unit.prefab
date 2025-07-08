@@ -410,6 +410,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 1
+  jumpHeight: 2
+  jumpDuration: 1.5
+  jumpCheckDistance: 1
+  jumpClearance: 1
   isHelicopter: 0
   cruiseHeight: 1
   transitionDistance: 1
