@@ -6,6 +6,8 @@ using System.Linq;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
+    
+    private UIManager uiManager;
 
     public enum GameState { Playing, Paused, Won, Lost }
     public GameState currentState;
@@ -27,10 +29,9 @@ public class GameManager : MonoBehaviour
         if (Instance != null && Instance != this) Destroy(gameObject);
         else Instance = this;
     }
-    
     void Start()
     {
-        //spawnConstructs();
+        uiManager = FindFirstObjectByType<UIManager>();
         allConstructs = FindObjectsByType<ConstructController>(FindObjectsSortMode.None).ToList();
         
         /*ConstructController playerStartNode = allConstructs[0];
@@ -50,12 +51,26 @@ public class GameManager : MonoBehaviour
             }
         }*/
     }
-
     void Update()
     {
         if (currentState == GameState.Playing)
         {
             CheckWinCondition();
+        }
+        
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (currentState == GameState.Playing)
+            {
+                uiManager.ShowPausePanel(true);
+                currentState = GameState.Paused;
+                Time.timeScale = 0f; // Pause the game
+            }
+            else if (currentState == GameState.Paused)
+            {
+                uiManager.ShowPausePanel(false);
+                uiManager.ResumeGame();
+            }
         }
     }
     
@@ -63,7 +78,6 @@ public class GameManager : MonoBehaviour
     {
         allUnits.Add(unit);
     }
-    
     public void unregisterUnit(UnitController unit)
     {
         allUnits.Remove(unit);
@@ -103,7 +117,7 @@ public class GameManager : MonoBehaviour
             return false;
         }
     }
-
+    
     void spawnConstructs()
     {
         for (int i = 0; i < constructs; i++)
@@ -139,7 +153,28 @@ public class GameManager : MonoBehaviour
 
     void CheckWinCondition()
     {
-        // Logic to check if all nodes belong to the player or the AI
-        // If so, change currentState to Won or Lost
+        var playersLeft = new List<FactionData>();
+        foreach (ConstructController construct in allConstructs)
+        {
+            if (construct.Owner != null && !playersLeft.Contains(construct.Owner) && construct.Owner != unclaimedFaction)
+            {
+                playersLeft.Add(construct.Owner);
+            }
+        }
+        if (playersLeft.Count == 1)
+        {
+            if (playersLeft[0].isPlayerControlled)
+            {
+                uiManager.ShowWinPanel();
+                currentState = GameState.Won;
+            }
+            else
+            {
+                uiManager.ShowLosePanel();
+                currentState = GameState.Lost;
+            }
+        }
     }
+    
+    
 }
