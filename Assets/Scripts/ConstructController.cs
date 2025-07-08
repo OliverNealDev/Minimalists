@@ -77,6 +77,8 @@ public class ConstructController : MonoBehaviour
     }
     public initialUnitCapacityTypes initialUnitCapacityType;
     public int manualInitialUnitCapacity = 0;
+    
+    public bool isIdleScene = false;
 
     void Awake()
     {
@@ -427,9 +429,17 @@ public class ConstructController : MonoBehaviour
             
             visuals.UpdateUnitCapacity(UnitCount, currentConstructData);
             ConstructData newConstructData = currentConstructData.upgradedVersion;
-            visuals.UpgradeScale(currentConstructData.upgradeTime, newConstructData);
-            Invoke("UpgradeConstruct", currentConstructData.upgradeTime + 0.4f);
-            isUpgrading = true;
+            if (!isIdleScene)
+            {
+                visuals.UpgradeScale(currentConstructData.upgradeTime, newConstructData);
+                Invoke("UpgradeConstruct", currentConstructData.upgradeTime + 0.4f);
+                isUpgrading = true;
+            }
+            else
+            {
+                visuals.ConstructChange(newConstructData, true, Owner.factionColor);
+                Invoke("UpgradeConstruct", 0.4f);
+            }
             checkUpgradeIndicator();
             
             //Debug.Log($"{name} has started the upgrade to {currentConstructData.constructName}!");

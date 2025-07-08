@@ -23,6 +23,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private int constructs = 10; // Example limit for constructs
     private Vector3 constructSpawnPosition;
     private bool isValidSpawnPosition = false;
+    
+    public bool isIdleScene = false; // Set this to true for idle scenes
 
     private void Awake()
     {
@@ -53,6 +55,8 @@ public class GameManager : MonoBehaviour
     }
     void Update()
     {
+        if (isIdleScene) return;
+        
         if (currentState == GameState.Playing)
         {
             CheckWinCondition();

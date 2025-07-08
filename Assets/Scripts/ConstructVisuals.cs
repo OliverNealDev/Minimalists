@@ -262,6 +262,7 @@ public class ConstructVisuals : MonoBehaviour
         float pulseFrequency = 1.0f;
         
         float reformDuration = 0.4f; // previously 0.25f
+        if (GameManager.Instance.isIdleScene) reformDuration *= 2f;
         float shrinkTime = reformDuration / 2.0f;
         float growTime = reformDuration / 2.0f;
 
