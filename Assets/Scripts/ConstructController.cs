@@ -235,7 +235,7 @@ public class ConstructController : MonoBehaviour
                 foreach (Collider col in colliders)
                 {
                     UnitController unit = col.GetComponent<UnitController>();
-                    if (unit != null && unit.owner != this.Owner)
+                    if (unit != null && unit.owner != this.Owner && !unit.isHelicopter)
                     {
                         float distance = Vector3.Distance(transform.position, col.transform.position);
                         if (distance < minDistance)

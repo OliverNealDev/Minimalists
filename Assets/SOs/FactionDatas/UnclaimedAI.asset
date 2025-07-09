@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: UnclaimedAI
   m_EditorClassIdentifier: 
   factionName: Unclaimed
-  factionColor: {r: 0.35686275, g: 0.35686275, b: 0.35686275, a: 1}
+  factionColor: {r: 0.8, g: 0.8, b: 0.8, a: 1}
   isPlayerControlled: 0

@@ -16,12 +16,13 @@ public class ConstructVisuals : MonoBehaviour
     [SerializeField] private Slider unitCapacitySlider;
     [SerializeField] private Image unitCapacityFillImage;
 
+    [SerializeField] private Light constructLight;
+    
     [SerializeField] private Image upgradeIndicatorImage;
     public bool isUpgradeIndicatorVisible = false;
     private bool isUpgrading = false;
     
     private Vector3 originalScale;
-
     
     [SerializeField] private Color selectedColor = Color.green;
     [SerializeField] private Color attackHoverColor = Color.red;
@@ -78,6 +79,12 @@ public class ConstructVisuals : MonoBehaviour
         {
             HoverGlow(true);
         }
+    }
+    
+    public void quickUpdateColor(Color color)
+    {
+        constructLight.color = color;
+        unitCapacityFillImage.color = color;
     }
 
     public void UpdateUnitCount(int count)
@@ -176,6 +183,7 @@ public class ConstructVisuals : MonoBehaviour
     {
         StopAllCoroutines(); // was in isUpgrading but house didnt visually upgrade once
         calibrateVisuals();
+        quickUpdateColor(newConstructColor);
         
         if (isUpgrading)
         {
