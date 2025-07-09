@@ -17,6 +17,7 @@ public class ConstructVisuals : MonoBehaviour
     [SerializeField] private Image unitCapacityFillImage;
 
     [SerializeField] private Light constructLight;
+    [SerializeField] private Light turretRadiusLight;
     
     [SerializeField] private Image upgradeIndicatorImage;
     public bool isUpgradeIndicatorVisible = false;
@@ -65,6 +66,40 @@ public class ConstructVisuals : MonoBehaviour
             isUpgradeIndicatorVisible = false;
         }
         upgradeIndicatorImage.gameObject.SetActive(isVisible);
+    }
+    public void UpdateTurretRadiusLight()
+    {
+        switch (gameObject.GetComponent<ConstructController>().currentConstructData.constructName)
+        {
+            case "Turret4":
+                turretRadiusLight.gameObject.SetActive(true);
+                turretRadiusLight.spotAngle = 57.32679f;
+                turretRadiusLight.innerSpotAngle = 57.32679f;
+                turretRadiusLight.color = lastKnownColor;
+                break;
+            case "Turret3":
+                turretRadiusLight.gameObject.SetActive(true);
+                turretRadiusLight.spotAngle = 49.13725f;
+                turretRadiusLight.innerSpotAngle = 49.13725f;
+                turretRadiusLight.color = lastKnownColor;
+                break;
+            case "Turret2":
+                turretRadiusLight.gameObject.SetActive(true);
+                turretRadiusLight.spotAngle = 40.94771f;
+                turretRadiusLight.innerSpotAngle = 40.94771f;
+                turretRadiusLight.color = lastKnownColor;
+                break;
+            case "Turret1":
+                turretRadiusLight.gameObject.SetActive(true);
+                turretRadiusLight.spotAngle = 31.58824f;
+                turretRadiusLight.innerSpotAngle = 31.58824f;
+                turretRadiusLight.color = lastKnownColor;
+                break;
+            default:
+                Debug.LogWarning("I'm not a turret lol");
+                turretRadiusLight.gameObject.SetActive(false);
+                break;
+        }
     }
     
     public void UpdateColor(Color color)
@@ -177,6 +212,7 @@ public class ConstructVisuals : MonoBehaviour
         nodeConstruct.transform.parent = transform;
         SetMeshRenderers();
         UpdateColor(lastKnownColor);
+        UpdateTurretRadiusLight();
     }
     
     public void ConstructChange(ConstructData constructData, bool isAnimated, Color newConstructColor)
@@ -208,6 +244,7 @@ public class ConstructVisuals : MonoBehaviour
         nodeConstruct.transform.parent = transform;
         SetMeshRenderers();
         UpdateColor(newConstructColor);
+        UpdateTurretRadiusLight();
     }
 
     private IEnumerator AnimateScale(float duration, ConstructData constructData)
@@ -256,6 +293,8 @@ public class ConstructVisuals : MonoBehaviour
             elapsedTime += Time.deltaTime;
             yield return null;
         }
+        
+        UpdateTurretRadiusLight();
 
         isUpgrading = false;
         nodeConstruct.transform.localScale = initialScale;
@@ -293,6 +332,7 @@ public class ConstructVisuals : MonoBehaviour
         
         SetMeshRenderers();
         UpdateColor(newConstructColor);
+        UpdateTurretRadiusLight();
 
         elapsedTime = 0f;
         while (elapsedTime < growTime)
@@ -303,5 +343,7 @@ public class ConstructVisuals : MonoBehaviour
         }
 
         nodeConstruct.transform.localScale = initialScale;
+
+        UpdateTurretRadiusLight();
     }
 }

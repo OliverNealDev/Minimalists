@@ -959,13 +959,25 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8432316785492117190, guid: 151d95581d775de44a6b047923f53c83, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -8432316785492117190, guid: 151d95581d775de44a6b047923f53c83, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 1eaa85847be81b24197cccdeeedd9234, type: 2}
     - target: {fileID: -6912028836158000676, guid: 151d95581d775de44a6b047923f53c83, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -6912028836158000676, guid: 151d95581d775de44a6b047923f53c83, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 1eaa85847be81b24197cccdeeedd9234, type: 2}
+    - target: {fileID: -3862013884827236743, guid: 151d95581d775de44a6b047923f53c83, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: -3862013884827236743, guid: 151d95581d775de44a6b047923f53c83, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
@@ -975,13 +987,25 @@ PrefabInstance:
       value: House3 (1)
       objectReference: {fileID: 0}
     - target: {fileID: 3120394704394474137, guid: 151d95581d775de44a6b047923f53c83, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3120394704394474137, guid: 151d95581d775de44a6b047923f53c83, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 1eaa85847be81b24197cccdeeedd9234, type: 2}
     - target: {fileID: 4370951913967234905, guid: 151d95581d775de44a6b047923f53c83, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4370951913967234905, guid: 151d95581d775de44a6b047923f53c83, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 1eaa85847be81b24197cccdeeedd9234, type: 2}
+    - target: {fileID: 6387188583878016185, guid: 151d95581d775de44a6b047923f53c83, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 6387188583878016185, guid: 151d95581d775de44a6b047923f53c83, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 

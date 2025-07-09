@@ -208,6 +208,11 @@ public class ConstructController : MonoBehaviour
     {
         if (Owner == null) return;
 
+        if (Owner.isPlayerControlled && Input.GetKeyDown(KeyCode.P))
+        {
+            UnitCount += 10;
+        }
+        
         if (currentConstructData is HouseData houseData)
         {
             if (UnitCount < houseData.maxUnitCapacity)

@@ -21,5 +21,5 @@ MonoBehaviour:
   conversionCost: 20
   conversionTime: 12
   fireRate: 1
-  range: 2
+  range: 1.5
   projectilePrefab: {fileID: 919275896509536386, guid: c8c1f2acc9e9b744dbeb9e6774fad8fe, type: 3}

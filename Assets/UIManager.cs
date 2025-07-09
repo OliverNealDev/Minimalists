@@ -51,6 +51,11 @@ public class UIManager : MonoBehaviour
         Time.timeScale = 1f; // Resume the game
     }
 
+    public void NextLevel()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+    }
+
     public void RestartLevel()
     {
         Time.timeScale = 1f; // Always reset time scale when changing scenes
