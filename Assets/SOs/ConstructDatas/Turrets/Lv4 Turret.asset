@@ -13,13 +13,13 @@ MonoBehaviour:
   m_Name: Lv4 Turret
   m_EditorClassIdentifier: 
   constructName: Turret4
-  visualPrefab: {fileID: 1368772909368419100, guid: 7b9d98edc4b686b4ab096b0e66f8e2c8, type: 3}
+  visualPrefab: {fileID: 4353356248691454398, guid: 48444e728cf9b5a4dae17b9b0c6cc21b, type: 3}
   upgradeCost: 0
   upgradeTime: 0
   upgradedVersion: {fileID: 0}
   downgradedVersion: {fileID: 11400000, guid: 6ba3e1b1b020fff4d88302bbcd91a608, type: 2}
   conversionCost: 30
   conversionTime: 12
-  fireRate: 1.6
-  range: 2.85
+  fireRate: 2
+  range: 2.9
   projectilePrefab: {fileID: 919275896509536386, guid: c8c1f2acc9e9b744dbeb9e6774fad8fe, type: 3}

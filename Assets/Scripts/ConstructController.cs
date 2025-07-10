@@ -39,6 +39,8 @@ public class ConstructController : MonoBehaviour
     private List<ConstructController> targetConstructs = new List<ConstructController>();
     
     public GameObject mortarProjectile;
+
+    public GameObject turretTarget;
     
     private bool isMouseOver = false;
     public bool isHoverGlowActive = false;
@@ -231,7 +233,7 @@ public class ConstructController : MonoBehaviour
         else if (currentConstructData is TurretData turretData)
         {
             shootCooldownBuffer -= Time.deltaTime;
-            if (shootCooldownBuffer <= 0f)
+            if (shootCooldownBuffer <= 0f && visuals.isLockedOn)
             {
                 Collider[] colliders = Physics.OverlapSphere(transform.position, turretData.range);
                 UnitController nearestEnemy = null;
@@ -243,7 +245,7 @@ public class ConstructController : MonoBehaviour
                     if (unit != null && unit.owner != this.Owner && !unit.isHelicopter)
                     {
                         float distance = Vector3.Distance(transform.position, col.transform.position);
-                        if (distance < minDistance)
+                        if (distance < minDistance && distance > 1)
                         {
                             minDistance = distance;
                             nearestEnemy = unit;
@@ -253,7 +255,10 @@ public class ConstructController : MonoBehaviour
 
                 if (nearestEnemy != null)
                 {
-                    GameObject newTurretProjectile = Instantiate(turretData.projectilePrefab, transform.position, Quaternion.identity);
+                    GameObject newTurretProjectile = Instantiate(
+                        turretData.projectilePrefab, 
+                        visuals.bulletSpawnPoint.transform.position, 
+                        Quaternion.identity);
                     turretProjectileController projectileController = newTurretProjectile.GetComponent<turretProjectileController>();
                     projectileController.owner = Owner;
                     projectileController.target = nearestEnemy;
@@ -269,6 +274,45 @@ public class ConstructController : MonoBehaviour
 
         visuals.UpdateUnitCount(Mathf.FloorToInt(UnitCount));
     }
+
+    void FixedUpdate() // VERY TAXING and can definitely be optimised
+    {
+        if (currentConstructData is TurretData turretData)
+        {
+            Collider[] colliders = Physics.OverlapSphere(transform.position, turretData.range);
+            UnitController nearestEnemy = null;
+            float minDistance = float.MaxValue;
+
+            foreach (Collider col in colliders)
+            {
+                UnitController unit = col.GetComponent<UnitController>();
+                if (unit != null && unit.owner != this.Owner && !unit.isHelicopter)
+                {
+                    float distance = Vector3.Distance(transform.position, col.transform.position);
+                    if (distance < minDistance && distance > 1)
+                    {
+                        minDistance = distance;
+                        nearestEnemy = unit;
+                    }
+                }
+            }
+
+            if (nearestEnemy != null)
+            {
+                turretTarget = nearestEnemy.gameObject;
+            }
+        }
+
+        if (turretTarget != null)
+        {
+            float distance = Vector3.Distance(transform.position, turretTarget.transform.position);
+            if (distance < 1)
+            {
+                turretTarget = null;
+            }
+        }
+    }
+    
     public void SetInitialOwner(FactionData newOwner)
     {
         Owner = newOwner;

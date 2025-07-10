@@ -29,7 +29,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 5.7, y: 5.7, z: 5.7}
+  m_LocalScale: {x: 5.8, y: 5.8, z: 5.8}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 7081112495768864481}
@@ -409,7 +409,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 4.8, y: 4.8, z: 4.8}
+  m_LocalScale: {x: 5.4, y: 5.4, z: 5.4}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 7081112495768864481}
@@ -1205,10 +1205,10 @@ Light:
   serializedVersion: 11
   m_Type: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 125
+  m_Intensity: 50
   m_Range: 10
-  m_SpotAngle: 57.326794
-  m_InnerSpotAngle: 57.326794
+  m_SpotAngle: 57.4
+  m_InnerSpotAngle: 57.4
   m_CookieSize: 10
   m_Shadows:
     m_Type: 0
@@ -1386,7 +1386,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 3.8999999, y: 3.8999999, z: 3.8999999}
+  m_LocalScale: {x: 5, y: 5, z: 5}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 7081112495768864481}
@@ -1542,6 +1542,7 @@ MonoBehaviour:
   currentConstructData: {fileID: 0}
   visuals: {fileID: 0}
   mortarProjectile: {fileID: 6720517345142762191, guid: 98880ecacfee0604f8e2238608e510f5, type: 3}
+  turretTarget: {fileID: 0}
   isHoverGlowActive: 0
   arrowInstance: {fileID: 2328454651584786696}
   mortarProceduralArrow: {fileID: 4213198485967457697, guid: 3aa6bc320c2aa8e44863210f704a8a27, type: 3}
@@ -1580,6 +1581,9 @@ MonoBehaviour:
   house2Model: {fileID: 6278288050820673143, guid: 25b54005c06e0b14a91444cb70171703, type: 3}
   house3Model: {fileID: 5306549449812311771, guid: 11b0e736ac9cf924ea928869226af974, type: 3}
   house4Model: {fileID: 7017363657162972272, guid: 33bb5778e6486914eb59877801579121, type: 3}
+  rotationSpeed: 8
+  isLockedOn: 0
+  bulletSpawnPoint: {fileID: 0}
 --- !u!65 &6182052860956765247
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1976,7 +1980,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 3, y: 3, z: 3}
+  m_LocalScale: {x: 4.6, y: 4.6, z: 4.6}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 7081112495768864481}

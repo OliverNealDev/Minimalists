@@ -18,6 +18,8 @@ public class ConstructVisuals : MonoBehaviour
 
     [SerializeField] private Light constructLight;
     [SerializeField] private Light turretRadiusLight;
+
+    private GameObject turretGroup;
     
     [SerializeField] private Image upgradeIndicatorImage;
     public bool isUpgradeIndicatorVisible = false;
@@ -35,23 +37,116 @@ public class ConstructVisuals : MonoBehaviour
     [SerializeField] private GameObject house3Model;
     [SerializeField] private GameObject house4Model;
     
+    private ConstructController constructController;
+    
     private Color lastKnownColor;
     
     private bool isHoverGlowing = false;
+
+    [Header("Targeting")]
+    public float rotationSpeed = 5f; // How fast the turret turns. Adjust in the Inspector.
+
+    [Header("State (Read-Only)")]
+    [Tooltip("Is the turret currently aimed at the target?")]
+    public bool isLockedOn = false; // Public bool to track lock-on state
+
+    private GameObject lastKnownTarget;
+    public GameObject bulletSpawnPoint;
 
     void Awake()
     {
         SetMeshRenderers();
         upgradeIndicatorImage.gameObject.SetActive(false);
         originalScale = nodeConstruct.transform.localScale;
+        constructController = GetComponent<ConstructController>();
+    }
+
+    void Update()
+    {
+        // Check if we have a valid target from the controller
+        if (constructController.currentConstructData is TurretData && constructController.turretTarget != null)
+        {
+            // --- Rotation Logic ---
+
+            // 1. Get the direction vector from the turret to the target
+            Vector3 direction = constructController.turretTarget.transform.position - turretGroup.transform.position;
+
+            // Optional: Uncomment the next line to keep the turret from tilting up or down
+            // direction.y = 0;
+
+            // 2. Calculate the target rotation
+            // We create a quaternion that "looks" in the calculated direction.
+            Quaternion targetRotation = Quaternion.LookRotation(direction);
+
+            // 3. Smoothly rotate towards the target rotation using Slerp
+            // Slerp (Spherical Linear Interpolation) is perfect for smooth rotations.
+            turretGroup.transform.rotation = Quaternion.Slerp(
+                turretGroup.transform.rotation,
+                targetRotation,
+                Time.deltaTime * rotationSpeed
+            );
+
+            // --- Lock-On State Logic ---
+
+            // Calculate the angle between where the turret is currently facing and the direction to the target.
+            float angleToTarget = Vector3.Angle(turretGroup.transform.forward, direction);
+
+            // If the angle is very small, we consider the turret "locked on".
+            // You can adjust the threshold (e.g., 1.0f) to be more or less strict.
+            if (angleToTarget < 1.0f)
+            {
+                isLockedOn = true;
+            }
+            else
+            {
+                isLockedOn = false;
+            }
+        }
+        else
+        {
+            // If there is no target, it cannot be locked on.
+            isLockedOn = false;
+        }
     }
     
     public void SetMeshRenderers()
     {
         meshRenderers.Clear();
-        for (int i = 0; i < nodeConstruct.transform.GetChild(0).childCount; i++)
+        bulletSpawnPoint = null;
+        Transform parentObject = nodeConstruct.transform.GetChild(0);
+
+        for (int i = 0; i < parentObject.childCount; i++)
         {
-            meshRenderers.Add(nodeConstruct.transform.GetChild(0).GetChild(i).GetComponent<MeshRenderer>());
+            Transform child = parentObject.GetChild(i);
+
+            if (child.CompareTag("meshGroup"))
+            {
+                Debug.Log($"Found meshGroup: {child.name}");
+                turretGroup = child.gameObject;
+                for (int f = 0; f < child.childCount; f++)
+                {
+                    if (child.GetChild(f).GetComponent<MeshRenderer>() != null)
+                    {
+                        meshRenderers.Add(child.GetChild(f).GetComponent<MeshRenderer>());
+                    }
+                    else
+                    {
+                        if (child.GetChild(f).tag == "bulletSpawnPoint")
+                        {
+                            bulletSpawnPoint = child.GetChild(f).gameObject;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                // Check if the component exists before adding it
+                MeshRenderer renderer = child.GetComponent<MeshRenderer>();
+                if (renderer != null)
+                {
+                    meshRenderers.Add(renderer);
+                }
+            }
         }
     }
     
@@ -73,32 +168,37 @@ public class ConstructVisuals : MonoBehaviour
         {
             case "Turret4":
                 turretRadiusLight.gameObject.SetActive(true);
-                turretRadiusLight.spotAngle = 57.32679f;
-                turretRadiusLight.innerSpotAngle = 57.32679f;
+                turretRadiusLight.spotAngle = 57.4f;
+                turretRadiusLight.innerSpotAngle = 57.4f;
                 turretRadiusLight.color = lastKnownColor;
                 break;
             case "Turret3":
                 turretRadiusLight.gameObject.SetActive(true);
-                turretRadiusLight.spotAngle = 49.13725f;
-                turretRadiusLight.innerSpotAngle = 49.13725f;
+                turretRadiusLight.spotAngle = 54;
+                turretRadiusLight.innerSpotAngle = 54;
                 turretRadiusLight.color = lastKnownColor;
                 break;
             case "Turret2":
                 turretRadiusLight.gameObject.SetActive(true);
-                turretRadiusLight.spotAngle = 40.94771f;
-                turretRadiusLight.innerSpotAngle = 40.94771f;
+                turretRadiusLight.spotAngle = 50.5f;
+                turretRadiusLight.innerSpotAngle = 50.5f;
                 turretRadiusLight.color = lastKnownColor;
                 break;
             case "Turret1":
                 turretRadiusLight.gameObject.SetActive(true);
-                turretRadiusLight.spotAngle = 31.58824f;
-                turretRadiusLight.innerSpotAngle = 31.58824f;
+                turretRadiusLight.spotAngle = 47;
+                turretRadiusLight.innerSpotAngle = 47;
                 turretRadiusLight.color = lastKnownColor;
                 break;
             default:
                 Debug.LogWarning("I'm not a turret lol");
                 turretRadiusLight.gameObject.SetActive(false);
                 break;
+        }
+        
+        if (gameObject.GetComponent<ConstructController>().Owner == GameManager.Instance.unclaimedFaction)
+        {
+            turretRadiusLight.color = new Color(0.55f, 0.55f, 0.55f, 1f); // Grey color for unclaimed constructs
         }
     }
     
