@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Lv2 House
   m_EditorClassIdentifier: 
   constructName: House2
-  visualPrefab: {fileID: 6278288050820673143, guid: 25b54005c06e0b14a91444cb70171703, type: 3}
+  visualPrefab: {fileID: 3883342242594264910, guid: 7462491a854dd5b49b4d991c5a2d5fa9, type: 3}
   upgradeCost: 10
   upgradeTime: 8
   upgradedVersion: {fileID: 11400000, guid: ab6ea622e48d2b1418549405f9477403, type: 2}

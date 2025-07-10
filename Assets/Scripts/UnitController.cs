@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 
 [RequireComponent(typeof(NavMeshAgent))]
 public class UnitController : MonoBehaviour
@@ -13,6 +14,14 @@ public class UnitController : MonoBehaviour
     private bool isJumping = false;
 
     public float moveSpeed = 15f;
+    public Vector3 GroundedScale = new Vector3(4.309667f, 4.309667f, 4.309667f);
+    public float GroundedYAxisOffset = -0.2757f;
+    public float SmallGroundedYAxisOffset = -0.824f;
+    public Vector3 AirScale = new Vector3(3.88f, 3.88f, 3.88f);
+
+    private Vector3 StartingScale;
+    private bool isScalingToStarting = false;
+    private bool hasFinishedInitialScale = false; // Flag to prevent premature scaling
 
     [Header("Ground Unit Jump Settings")]
     public float jumpHeight = 5f;
@@ -34,15 +43,36 @@ public class UnitController : MonoBehaviour
     void Start()
     {
         GameManager.Instance.registerUnit(this);
-
         if (isHelicopter)
         {
+            // Set initial scale for the helicopter model
+            transform.GetChild(1).localScale = AirScale / 10f;
+            StartingScale = AirScale / 10f;
+        }
+        else
+        {
+            // Set initial scale and Y-position for the ground unit model
+            Transform groundModel = transform.GetChild(0);
+            groundModel.localScale = GroundedScale / 10f;
+            StartingScale = GroundedScale / 10f;
+            Vector3 startPos = groundModel.localPosition;
+            startPos.y = SmallGroundedYAxisOffset;
+            groundModel.localPosition = startPos;
+        }
+
+        // Start the initial scaling animation
+        StartCoroutine(ScaleToNormal());
+        
+        if (isHelicopter)
+        {
+            // Configure for helicopter
             transform.GetChild(0).gameObject.SetActive(false);
             transform.GetChild(1).gameObject.SetActive(true);
             navMeshAgent.enabled = false;
             moveSpeed *= 2f;
             StartCoroutine(HelicopterFlightRoutine());
 
+            // Apply faction color to the helicopter model
             foreach (MeshRenderer renderer in transform.GetChild(1).GetComponentsInChildren<MeshRenderer>())
             {
                 renderer.material.color = owner.factionColor;
@@ -50,9 +80,14 @@ public class UnitController : MonoBehaviour
         }
         else
         {
+            // Configure for ground unit
             navMeshAgent.enabled = true;
-            navMeshAgent.SetDestination(target.transform.position);
+            if (target != null)
+            {
+                navMeshAgent.SetDestination(target.transform.position);
+            }
 
+            // Apply faction color to the ground unit model
             foreach (MeshRenderer renderer in transform.GetChild(0).GetComponentsInChildren<MeshRenderer>())
             {
                 renderer.material.color = owner.factionColor;
@@ -61,8 +96,10 @@ public class UnitController : MonoBehaviour
     }
     void Update()
     {
+        // Early exit if there's no target or if it's a helicopter (which has its own movement logic)
         if (target == null || isHelicopter) return;
 
+        // Logic for ground unit jumping over obstacles
         if (!isJumping && navMeshAgent.hasPath && navMeshAgent.velocity.sqrMagnitude > 0.1f)
         {
             foreach (var construct in GameManager.Instance.allConstructs)
@@ -86,12 +123,102 @@ public class UnitController : MonoBehaviour
             }
         }
 
+        // Check if the unit has arrived at its destination
         if (!isJumping && !navMeshAgent.pathPending && navMeshAgent.remainingDistance < 0.2f)
         {
             ArriveAtTarget();
+            return;
+        }
+        
+        // Start scaling down when approaching the target, ONLY if the initial scale-up is finished.
+        if (hasFinishedInitialScale && navMeshAgent.remainingDistance < 0.75f && !isScalingToStarting)
+        {
+            isScalingToStarting = true;
+            StartCoroutine(ScaleToStarting());
         }
     }
 
+    private IEnumerator ScaleToNormal()
+    {
+        float duration = 0.75f;
+        float timer = 0f;
+
+        Transform childTransform = isHelicopter ? transform.GetChild(1) : transform.GetChild(0);
+        Vector3 startScale = childTransform.localScale;
+        Vector3 endScale = isHelicopter ? AirScale : GroundedScale;
+
+        Vector3 startPos = childTransform.localPosition;
+        // The end Y position is the standard grounded offset for ground units, or its current Y for helicopters
+        float endYPos = isHelicopter ? startPos.y : GroundedYAxisOffset;
+        Vector3 endPos = new Vector3(startPos.x, endYPos, startPos.z);
+
+
+        while (timer < duration)
+        {
+            float t = timer / duration;
+            
+            // Lerp scale and position simultaneously
+            childTransform.localScale = Vector3.Lerp(startScale, endScale, t);
+            if (!isHelicopter)
+            {
+                childTransform.localPosition = Vector3.Lerp(startPos, endPos, t);
+            }
+
+            timer += Time.deltaTime;
+            yield return null;
+        }
+
+        // Ensure final values are set precisely
+        childTransform.localScale = endScale;
+        if (!isHelicopter)
+        {
+            childTransform.localPosition = endPos;
+        }
+        
+        // Signal that the initial scaling is complete
+        hasFinishedInitialScale = true;
+        
+        transform.GetChild(0).GetComponent<WaterBob>().enabled = true;
+    }
+    
+    private IEnumerator ScaleToStarting()
+    {
+        float duration = 0.75f;
+        float timer = 0f;
+
+        Transform childTransform = isHelicopter ? transform.GetChild(1) : transform.GetChild(0);
+        Vector3 startScale = childTransform.localScale;
+        // Note: StartingScale was set in the Start() method
+        Vector3 endScale = StartingScale;
+
+        Vector3 startPos = childTransform.localPosition;
+        // The end Y position is the small offset for ground units, or its current Y for helicopters
+        float endYPos = isHelicopter ? startPos.y : SmallGroundedYAxisOffset;
+        Vector3 endPos = new Vector3(startPos.x, endYPos, startPos.z);
+
+        while (timer < duration)
+        {
+            float t = timer / duration;
+            
+            // Lerp scale and position simultaneously
+            childTransform.localScale = Vector3.Lerp(startScale, endScale, t);
+            if (!isHelicopter)
+            {
+                childTransform.localPosition = Vector3.Lerp(startPos, endPos, t);
+            }
+
+            timer += Time.deltaTime;
+            yield return null;
+        }
+
+        // Ensure final values are set precisely
+        childTransform.localScale = endScale;
+        if (!isHelicopter)
+        {
+            childTransform.localPosition = endPos;
+        }
+    }
+    
     private IEnumerator JumpOverObstacle(Transform obstacle)
     {
         isJumping = true;
@@ -132,7 +259,9 @@ public class UnitController : MonoBehaviour
         target = setTarget;
         isHelicopter = Helicopter;
 
-        GetComponent<MeshRenderer>().material.color = owner.factionColor;
+        // This line might be redundant if you are coloring the child models directly,
+        // but it depends on your prefab structure.
+        // GetComponent<MeshRenderer>().material.color = owner.factionColor;
         navMeshAgent.enabled = false;
     }
     public void OnShot()
@@ -190,7 +319,7 @@ public class UnitController : MonoBehaviour
 
         Vector3 p0_landing = transform.position;
         timer = 0f;
-
+        
         while(timer < transitionDuration)
         {
             if (target == null) { Destroy(gameObject); yield break; }
@@ -200,6 +329,12 @@ public class UnitController : MonoBehaviour
 
             float t = timer / transitionDuration;
             Vector3 newPos = CalculateQuadraticBezierPoint(t, p0_landing, p1_landing, p2_landing);
+
+            if (t > 0.5f && !isScalingToStarting)
+            {
+                isScalingToStarting = true;
+                StartCoroutine(ScaleToStarting());
+            }
 
             if ((newPos - transform.position).sqrMagnitude > 0.001f)
                 transform.rotation = Quaternion.LookRotation(newPos - transform.position);

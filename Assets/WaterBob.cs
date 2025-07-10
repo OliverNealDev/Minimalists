@@ -12,6 +12,8 @@ public class WaterBob : MonoBehaviour
     // The initial position of the GameObject, stored when the game starts.
     private Vector3 startPosition;
 
+    private float clientTime;
+
     void Start()
     {
         // Record the starting position of the GameObject.
@@ -21,11 +23,13 @@ public class WaterBob : MonoBehaviour
 
     void Update()
     {
+        clientTime += Time.deltaTime;
+        
         // Calculate the vertical displacement using a sine wave.
         // Time.time ensures the motion is continuous and smooth.
         // 'speed' controls how fast the wave oscillates.
         // 'amplitude' controls the height of the wave.
-        float displacement = Mathf.Sin(Time.time * speed) * amplitude;
+        float displacement = Mathf.Sin(clientTime * speed) * amplitude;
 
         // Create the new position by adding the displacement to the starting Y position.
         // We use the original X and Z to prevent any unwanted sideways movement.

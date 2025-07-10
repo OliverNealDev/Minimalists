@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Helipad
   m_EditorClassIdentifier: 
   constructName: Helipad
-  visualPrefab: {fileID: 1368772909368419100, guid: 34eba7d48ab602f4bab08ede93ebdd6b, type: 3}
+  visualPrefab: {fileID: 5987121381377967854, guid: dacbd0159d743d944b8d3312771f2631, type: 3}
   upgradeCost: 0
   upgradeTime: 0
   upgradedVersion: {fileID: 0}
