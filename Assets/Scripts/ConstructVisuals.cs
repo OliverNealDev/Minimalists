@@ -198,7 +198,7 @@ public class ConstructVisuals : MonoBehaviour
         
         if (gameObject.GetComponent<ConstructController>().Owner == GameManager.Instance.unclaimedFaction)
         {
-            turretRadiusLight.color = new Color(0.55f, 0.55f, 0.55f, 1f); // Grey color for unclaimed constructs
+            turretRadiusLight.color = new Color(0.75f, 0.75f, 0.75f, 1f); // Grey color for unclaimed constructs
         }
     }
     
