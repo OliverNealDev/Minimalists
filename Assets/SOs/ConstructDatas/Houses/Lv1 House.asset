@@ -18,7 +18,7 @@ MonoBehaviour:
   upgradeTime: 4
   upgradedVersion: {fileID: 11400000, guid: 17e49bbc1d0b3584b802030673430ad6, type: 2}
   downgradedVersion: {fileID: 0}
-  conversionCost: 20
-  conversionTime: 12
+  conversionCost: 10
+  conversionTime: 8
   maxUnitCapacity: 10
   unitsPerSecond: 0.5
