@@ -81,12 +81,20 @@ public class ConstructController : MonoBehaviour
     public int manualInitialUnitCapacity = 0;
     
     public bool isIdleScene = false;
+    
+    [SerializeField] private LayerMask unitLayerMask;
+    [SerializeField] private float turretTargetSearchInterval = 0.05f;
+    private float _searchTimer;
+    private Collider[] _colliderResults;
+    private const int MAX_COLLIDERS = 32;
 
     void Awake()
     {
         visuals = GetComponent<ConstructVisuals>();
 
         arrowInstance = FindFirstObjectByType<ProceduralArrow>();
+        
+        _colliderResults = new Collider[MAX_COLLIDERS]; // pre allocated array for collider results to avoid allocations during runtime
     }
     void Start()
     {
@@ -209,10 +217,20 @@ public class ConstructController : MonoBehaviour
     void Update()
     {
         if (Owner == null) return;
-
+        
+        if (currentConstructData is TurretData)
+        {
+            _searchTimer -= Time.deltaTime;
+            if (_searchTimer <= 0)
+            {
+                FindNewTurretTarget();
+                _searchTimer = turretTargetSearchInterval;
+            }
+        }
+        
         if (Owner.isPlayerControlled && Input.GetKeyDown(KeyCode.P))
         {
-            UnitCount += 10;
+            UnitCount += 100;
         }
         
         if (currentConstructData is HouseData houseData)
@@ -261,7 +279,7 @@ public class ConstructController : MonoBehaviour
                         Quaternion.identity);
                     turretProjectileController projectileController = newTurretProjectile.GetComponent<turretProjectileController>();
                     projectileController.owner = Owner;
-                    projectileController.target = nearestEnemy;
+                    projectileController.target = turretTarget.GetComponent<UnitController>();
                     
                     shootCooldownBuffer = 1f / turretData.fireRate;
                 }
@@ -275,10 +293,19 @@ public class ConstructController : MonoBehaviour
         visuals.UpdateUnitCount(Mathf.FloorToInt(UnitCount));
     }
 
-    void FixedUpdate() // VERY TAXING and can definitely be optimised
+    void FindNewTurretTarget() // VERY TAXING and can definitely be optimised
     {
         if (currentConstructData is TurretData turretData)
         {
+            /*if (turretTarget != null)
+            {
+                float distance = Vector3.Distance(transform.position, turretTarget.transform.position);
+                if (distance > 1 && distance < turretData.range)
+                {
+                    return;
+                }
+            }*/
+            
             Collider[] colliders = Physics.OverlapSphere(transform.position, turretData.range);
             UnitController nearestEnemy = null;
             float minDistance = float.MaxValue;
@@ -288,8 +315,53 @@ public class ConstructController : MonoBehaviour
                 UnitController unit = col.GetComponent<UnitController>();
                 if (unit != null && unit.owner != this.Owner && !unit.isHelicopter)
                 {
-                    float distance = Vector3.Distance(transform.position, col.transform.position);
-                    if (distance < minDistance && distance > 1)
+                    float distance = Vector3.Distance(visuals.bulletSpawnPoint.transform.position, col.transform.position);
+                    if (distance < minDistance && distance > 0.4f)
+                    {
+                        minDistance = distance;
+                        nearestEnemy = unit;
+                    }
+                }
+            }
+
+            if (nearestEnemy != null)
+            {
+                turretTarget = nearestEnemy.gameObject;
+            }
+        }
+
+        if (turretTarget != null)
+        {
+            float distance = Vector3.Distance(transform.position, turretTarget.transform.position);
+            if (distance < 1)
+            {
+                turretTarget = null;
+            }
+        }
+    }
+    
+    void ixedUpdate() // VERY TAXING and can definitely be optimised
+    {
+        if (currentConstructData is TurretData turretData)
+        {
+            /*if (turretTarget != null)
+            {
+                float distance = Vector3.Distance(transform.position, turretTarget.transform.position);
+                if (distance > 1 && distance < turretData.range)
+                {
+                    return;
+                }
+            }*/
+            
+            UnitController nearestEnemy = null;
+            float minDistance = float.MaxValue;
+            
+            foreach (UnitController unit in GameManager.Instance.allUnits)
+            {
+                if (unit != null && unit.owner != this.Owner && !unit.isHelicopter)
+                {
+                    float distance = Vector3.Distance(visuals.bulletSpawnPoint.transform.position, unit.transform.position);
+                    if (distance < minDistance && distance > 0.4f && distance < turretData.range)
                     {
                         minDistance = distance;
                         nearestEnemy = unit;

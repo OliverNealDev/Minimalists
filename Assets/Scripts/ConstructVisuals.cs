@@ -93,7 +93,7 @@ public class ConstructVisuals : MonoBehaviour
 
             // If the angle is very small, we consider the turret "locked on".
             // You can adjust the threshold (e.g., 1.0f) to be more or less strict.
-            if (angleToTarget < 1.0f)
+            if (angleToTarget < 5.0f)
             {
                 isLockedOn = true;
             }
@@ -191,7 +191,6 @@ public class ConstructVisuals : MonoBehaviour
                 turretRadiusLight.color = lastKnownColor;
                 break;
             default:
-                Debug.LogWarning("I'm not a turret lol");
                 turretRadiusLight.gameObject.SetActive(false);
                 break;
         }
