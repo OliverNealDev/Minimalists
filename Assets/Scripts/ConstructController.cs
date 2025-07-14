@@ -79,6 +79,8 @@ public class ConstructController : MonoBehaviour
     }
     public initialUnitCapacityTypes initialUnitCapacityType;
     public int manualInitialUnitCapacity = 0;
+
+    public int navmeshIndex = 0; // Manually setting different navmesh areas within the navmesh
     
     public bool isIdleScene = false;
     
@@ -340,18 +342,18 @@ public class ConstructController : MonoBehaviour
         }
     }
     
-    void ixedUpdate() // VERY TAXING and can definitely be optimised
+    /*void FixedUpdate() // VERY TAXING and can definitely be optimised
     {
         if (currentConstructData is TurretData turretData)
         {
-            /*if (turretTarget != null)
-            {
-                float distance = Vector3.Distance(transform.position, turretTarget.transform.position);
-                if (distance > 1 && distance < turretData.range)
-                {
-                    return;
-                }
-            }*/
+            //if (turretTarget != null)
+            //{
+            //    float distance = Vector3.Distance(transform.position, turretTarget.transform.position);
+            //    if (distance > 1 && distance < turretData.range)
+            //    {
+            //        return;
+            //    }
+            //}
             
             UnitController nearestEnemy = null;
             float minDistance = float.MaxValue;
@@ -383,7 +385,7 @@ public class ConstructController : MonoBehaviour
                 turretTarget = null;
             }
         }
-    }
+    }*/
     
     public void SetInitialOwner(FactionData newOwner)
     {
@@ -414,8 +416,19 @@ public class ConstructController : MonoBehaviour
         }
         if (unitsToSend > 0)
         {
-            targetConstructs.Add(target);
-            StartCoroutine(SpawnUnitsRoutine(unitsToSend, target));
+            if (currentConstructData is HelipadData)
+            {
+                targetConstructs.Add(target);
+                StartCoroutine(SpawnUnitsRoutine(unitsToSend, target));
+            }
+            else
+            {
+                if (navmeshIndex == target.navmeshIndex)
+                {
+                    targetConstructs.Add(target);
+                    StartCoroutine(SpawnUnitsRoutine(unitsToSend, target));
+                }
+            }
         }
     }
     
