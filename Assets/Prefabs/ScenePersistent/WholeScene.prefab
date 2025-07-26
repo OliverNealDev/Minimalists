@@ -189,7 +189,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3585704350546425094}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e1dc8d52344354b4abee659f813e512e, type: 3}
   m_Name: 
@@ -198,6 +198,9 @@ MonoBehaviour:
   - {fileID: 8300000, guid: ce8aa7a069a0d064883fd69401d644d6, type: 3}
   - {fileID: 8300000, guid: ceb35f9ba05cf4c45bf25d50f886eeee, type: 3}
   - {fileID: 8300000, guid: 7a2268a8bdf980546a063c9dbbefaf52, type: 3}
+  - {fileID: 8300000, guid: 411c3a3b492891f429f77942aeaa3254, type: 3}
+  - {fileID: 8300000, guid: 411c3a3b492891f429f77942aeaa3254, type: 3}
+  - {fileID: 8300000, guid: d604fd339f97e4c4aaec61d4d40b6ed9, type: 3}
   fadeDuration: 4
   maxVolume: 0.1
 --- !u!82 &3810298423084657230

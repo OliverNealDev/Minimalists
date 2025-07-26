@@ -97,7 +97,7 @@ public class InputManager : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            EvenOutUnitCounts();
+            //EvenOutUnitCounts();
         }
 
         if (Input.mouseScrollDelta.y != 0)

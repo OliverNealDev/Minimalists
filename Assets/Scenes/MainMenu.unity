@@ -11261,6 +11261,8 @@ MonoBehaviour:
     m_Bits: 128
   doubleClickThreshold: 0.25
   UnitPercentBar: {fileID: 761790645}
+  clickSound: {fileID: 0}
+  sendSound: {fileID: 0}
 --- !u!4 &368886751
 Transform:
   m_ObjectHideFlags: 0
@@ -61069,6 +61071,9 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   turretTargetSearchInterval: 0.05
+  upgradeSound: {fileID: 0}
+  captureSound: {fileID: 0}
+  shootSound: {fileID: 0}
 --- !u!1 &4768944451165313297
 GameObject:
   m_ObjectHideFlags: 0

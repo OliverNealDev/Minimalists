@@ -3361,6 +3361,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4454330730491435596}
     m_Modifications:
+    - target: {fileID: 1616711801536214315, guid: 304645cc0ceff5f41bca9a41c5d7879b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7121558002212698111, guid: 304645cc0ceff5f41bca9a41c5d7879b, type: 3}
       propertyPath: m_Name
       value: CommandCard
