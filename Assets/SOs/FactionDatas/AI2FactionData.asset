@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: AI2FactionData
   m_EditorClassIdentifier: 
   factionName: AI2
-  factionColor: {r: 0.16820934, g: 0.5048113, b: 0.7924528, a: 1}
+  factionColor: {r: 0.7921569, g: 0.7407916, b: 0.16862743, a: 1}
   isPlayerControlled: 0

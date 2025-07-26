@@ -35,10 +35,20 @@ public class UnitController : MonoBehaviour
     public float transitionDistance = 20f;
     public float transitionDuration = 2.5f;
     public float landingApproachDistance = 25f;
+    
+    private AudioSource audioSource;
+    [SerializeField] private AudioClip walkSound;
+    [SerializeField] private AudioClip jumpSound;
+    [SerializeField] private AudioClip helicopterSound;
+    [SerializeField] private AudioClip deploySound;
+    [SerializeField] private AudioClip groundDieSound;
+    [SerializeField] private AudioClip airDieSound;
 
     void Awake()
     {
         navMeshAgent = GetComponent<NavMeshAgent>();
+        
+        audioSource = GetComponent<AudioSource>();
     }
     void Start()
     {
@@ -65,6 +75,8 @@ public class UnitController : MonoBehaviour
         
         if (isHelicopter)
         {
+            if (Random.value > 0.5f) InvokeRepeating("HelicopterSound", 0.25f, 41);
+            
             // Configure for helicopter
             transform.GetChild(0).gameObject.SetActive(false);
             transform.GetChild(1).gameObject.SetActive(true);
@@ -80,6 +92,8 @@ public class UnitController : MonoBehaviour
         }
         else
         {
+            if (Random.value > 0.5f) InvokeRepeating("WalkSound", 0.25f, 4);
+            
             // Configure for ground unit
             navMeshAgent.enabled = true;
             if (target != null)
@@ -136,6 +150,18 @@ public class UnitController : MonoBehaviour
             isScalingToStarting = true;
             StartCoroutine(ScaleToStarting());
         }
+    }
+
+    void WalkSound()
+    {
+        audioSource.pitch = Random.Range(0.9f, 1.1f);
+        audioSource.PlayOneShot(walkSound);
+    }
+    
+    void HelicopterSound()
+    {
+        audioSource.pitch = Random.Range(0.9f, 1.1f);
+        audioSource.PlayOneShot(helicopterSound);
     }
 
     private IEnumerator ScaleToNormal()

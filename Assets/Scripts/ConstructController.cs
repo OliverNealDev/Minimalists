@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 public class ConstructController : MonoBehaviour
 {
@@ -53,7 +54,9 @@ public class ConstructController : MonoBehaviour
         Unclaimed,
         Player,
         AI1,
-        AI2
+        AI2,
+        AI3,
+        AI4
     }
     public initialOwnerTypes initialOwner;
     public enum initialConstructTypes
@@ -89,6 +92,11 @@ public class ConstructController : MonoBehaviour
     private float _searchTimer;
     private Collider[] _colliderResults;
     private const int MAX_COLLIDERS = 32;
+    
+    private AudioSource audioSource;
+    [SerializeField] private AudioClip upgradeSound;
+    [SerializeField] private AudioClip captureSound;
+    [SerializeField] private AudioClip shootSound;
 
     void Awake()
     {
@@ -97,6 +105,8 @@ public class ConstructController : MonoBehaviour
         arrowInstance = FindFirstObjectByType<ProceduralArrow>();
         
         _colliderResults = new Collider[MAX_COLLIDERS]; // pre allocated array for collider results to avoid allocations during runtime
+        
+        audioSource = GetComponent<AudioSource>();
     }
     void Start()
     {
@@ -113,6 +123,12 @@ public class ConstructController : MonoBehaviour
                 break;
             case initialOwnerTypes.AI2:
                 SetInitialOwner(GameManager.Instance.ai2Faction);
+                break;
+            case initialOwnerTypes.AI3:
+                SetInitialOwner(GameManager.Instance.ai3Faction);
+                break;
+            case initialOwnerTypes.AI4:
+                SetInitialOwner(GameManager.Instance.ai4Faction);
                 break;
         }
         
@@ -275,6 +291,9 @@ public class ConstructController : MonoBehaviour
 
                 if (nearestEnemy != null)
                 {
+                    audioSource.pitch = Random.Range(0.9f, 1.1f);
+                    audioSource.PlayOneShot(shootSound);
+                    
                     GameObject newTurretProjectile = Instantiate(
                         turretData.projectilePrefab, 
                         visuals.bulletSpawnPoint.transform.position, 
@@ -358,7 +377,7 @@ public class ConstructController : MonoBehaviour
             UnitController nearestEnemy = null;
             float minDistance = float.MaxValue;
             
-            foreach (UnitController unit in GameManager.Instance.allUnits)
+            foreach (UnitController unit in GameManager.Instance.allUnits)dw
             {
                 if (unit != null && unit.owner != this.Owner && !unit.isHelicopter)
                 {
@@ -503,6 +522,9 @@ public class ConstructController : MonoBehaviour
                 Owner = unitOwner;
                 UnitCount = 1;
                 
+                audioSource.pitch = Random.Range(0.9f, 1.1f);
+                audioSource.PlayOneShot(upgradeSound);
+                
                 StopAllCoroutines();
                 CancelInvoke();
                 if (isConverting)
@@ -567,6 +589,7 @@ public class ConstructController : MonoBehaviour
             {
                 visuals.UpgradeScale(currentConstructData.upgradeTime, newConstructData);
                 Invoke("UpgradeConstruct", currentConstructData.upgradeTime + 0.4f);
+                Invoke("UpgradeSFX", currentConstructData.upgradeTime);
                 isUpgrading = true;
             }
             else
@@ -591,6 +614,15 @@ public class ConstructController : MonoBehaviour
         visuals.UpdateUnitCapacity(UnitCount, currentConstructData);
         checkUpgradeIndicator();
     }
+    
+    private void UpgradeSFX()
+    {
+        if (Owner == GameManager.Instance.playerFaction)
+        {
+            audioSource.pitch = Random.Range(0.9f, 1.1f);
+            audioSource.PlayOneShot(upgradeSound);
+        }
+    }
 
     public void AttemptConvertConstruct(ConstructData constructData)
     {
@@ -604,6 +636,7 @@ public class ConstructController : MonoBehaviour
             visuals.UpgradeScale(constructData.conversionTime, constructData);
             convertingConstructData = constructData;
             Invoke("ConvertConstruct", constructData.conversionTime + 0.4f);
+            Invoke("UpgradeSFX", currentConstructData.conversionTime);
             isConverting = true;
             //UpdateVisualsForOwner();
             checkUpgradeIndicator();

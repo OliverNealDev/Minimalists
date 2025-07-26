@@ -30487,7 +30487,7 @@ GameObject:
   - component: {fileID: 1026637720}
   - component: {fileID: 1026637722}
   - component: {fileID: 1026637721}
-  m_Layer: 7
+  m_Layer: 2
   m_Name: Spot Light (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -52753,6 +52753,8 @@ MonoBehaviour:
   playerFaction: {fileID: 11400000, guid: 0c9e025e4f9e14846abaa3e6990a3c5f, type: 2}
   aiFaction: {fileID: 11400000, guid: 810f9136a57c4dc44a024e0cb3fc8b74, type: 2}
   ai2Faction: {fileID: 11400000, guid: eb8bab1036b44474596174f544138d87, type: 2}
+  ai3Faction: {fileID: 0}
+  ai4Faction: {fileID: 0}
   constructPrefab: {fileID: 6088222392709635657, guid: 6e96fb6bb887e804ab55538b02703fef, type: 3}
   constructs: 6
   isIdleScene: 1
@@ -59413,7 +59415,7 @@ GameObject:
   - component: {fileID: 4316182345393561307}
   - component: {fileID: 5270325474809801988}
   - component: {fileID: 6357427905467951369}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Roof
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -59578,7 +59580,7 @@ GameObject:
   - component: {fileID: 1853283070442473588}
   - component: {fileID: 2787650931833020087}
   - component: {fileID: 2328454652566773519}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: ProceduralArrow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -59597,7 +59599,7 @@ GameObject:
   - component: {fileID: 4541761280743473887}
   - component: {fileID: 3515720374443790728}
   - component: {fileID: 8485339725099634574}
-  m_Layer: 7
+  m_Layer: 2
   m_Name: SelectRing
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -59712,7 +59714,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8612073403468437860}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: House1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -59773,7 +59775,7 @@ GameObject:
   - component: {fileID: 1293313701689362295}
   - component: {fileID: 220854064910987377}
   - component: {fileID: 8481694401972030297}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -60013,7 +60015,7 @@ GameObject:
   - component: {fileID: 8848824035491273431}
   - component: {fileID: 3337116630536359118}
   - component: {fileID: 6866472520013780650}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: T_Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -60285,7 +60287,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 380709360124628587}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: NodeMenu
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -60624,7 +60626,7 @@ GameObject:
   - component: {fileID: 1222970850389057888}
   - component: {fileID: 9074309423608083134}
   - component: {fileID: 1320948169776286060}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: mUPProceduralArrow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -60706,7 +60708,7 @@ GameObject:
   - component: {fileID: 3423676832300210406}
   - component: {fileID: 6370707591095693616}
   - component: {fileID: 2772685490835756795}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Cube (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -60722,7 +60724,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3608718694986744893}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: House1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -60853,7 +60855,7 @@ GameObject:
   - component: {fileID: 8458839987776451327}
   - component: {fileID: 5603664646751240566}
   - component: {fileID: 4567885300607474412}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: House
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -61056,11 +61058,12 @@ MonoBehaviour:
   isHoverGlowActive: 0
   arrowInstance: {fileID: 2328454652566773519}
   mortarProceduralArrow: {fileID: 4213198485967457697, guid: 3aa6bc320c2aa8e44863210f704a8a27, type: 3}
-  initialOwner: 3
+  initialOwner: 1
   initialConstructType: 0
   initialLevel: 0
   initialUnitCapacityType: 0
   manualInitialUnitCapacity: 0
+  navmeshIndex: 0
   isIdleScene: 0
   unitLayerMask:
     serializedVersion: 2
@@ -61078,7 +61081,7 @@ GameObject:
   - component: {fileID: 7890635486004164685}
   - component: {fileID: 8219325554527905890}
   - component: {fileID: 6978800077062810913}
-  m_Layer: 7
+  m_Layer: 2
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -61096,7 +61099,7 @@ GameObject:
   - component: {fileID: 8157406727759898202}
   - component: {fileID: 3188468485769121780}
   - component: {fileID: 7575291574517613747}
-  m_Layer: 7
+  m_Layer: 2
   m_Name: Spot Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -61316,7 +61319,7 @@ GameObject:
   - component: {fileID: 7704124494439955293}
   - component: {fileID: 1742701233396680834}
   - component: {fileID: 663922978707655823}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Roof
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -61345,7 +61348,7 @@ GameObject:
   - component: {fileID: 6182052862140072504}
   - component: {fileID: 5474030933326948436}
   - component: {fileID: 3924543581604876588}
-  m_Layer: 7
+  m_Layer: 2
   m_Name: Node (5)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -61511,7 +61514,7 @@ GameObject:
   - component: {fileID: 5826270452787300778}
   - component: {fileID: 3584015318894622621}
   - component: {fileID: 6777357317189443702}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: H_Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -61688,7 +61691,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5898419528781289512}
   - component: {fileID: 7441539547378268856}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: GameObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -61873,7 +61876,7 @@ GameObject:
   - component: {fileID: 4341161143295063154}
   - component: {fileID: 7892048265819155446}
   - component: {fileID: 8585791615571940952}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Text (TMP)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -61960,7 +61963,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7140485907269509563}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: House1 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -61978,7 +61981,7 @@ GameObject:
   - component: {fileID: 1852166471161685697}
   - component: {fileID: 3487761038390431181}
   - component: {fileID: 2797526690265249471}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Cube (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -62053,7 +62056,7 @@ GameObject:
   - component: {fileID: 2625443240866518905}
   - component: {fileID: 2074070217755043056}
   - component: {fileID: 7955828557705101162}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: House
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -62256,7 +62259,7 @@ GameObject:
   - component: {fileID: 4175729342880558613}
   - component: {fileID: 4247202605247597541}
   - component: {fileID: 5127066055210137313}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: mDOWNProceduralArrow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -62476,7 +62479,7 @@ GameObject:
   - component: {fileID: 2898941809040856932}
   - component: {fileID: 1636135695316881161}
   - component: {fileID: 4436421916791797069}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Text (TMP)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -62543,7 +62546,7 @@ GameObject:
   - component: {fileID: 6935744145327375312}
   - component: {fileID: 4294705149912692367}
   - component: {fileID: 6507945134979755646}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Cube (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -62562,7 +62565,7 @@ GameObject:
   - component: {fileID: 7112179049205262195}
   - component: {fileID: 5334967914229571508}
   - component: {fileID: 8020498012684012417}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: HeliPad_Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -62588,7 +62591,7 @@ GameObject:
   - component: {fileID: 3794222972162544919}
   - component: {fileID: 5913582336601789157}
   - component: {fileID: 6168783915585506681}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Cube (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -62651,7 +62654,7 @@ GameObject:
   - component: {fileID: 7692787495215657808}
   - component: {fileID: 6099559534295410052}
   - component: {fileID: 6818207598420718793}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Text (TMP)
   m_TagString: Untagged
   m_Icon: {fileID: 0}

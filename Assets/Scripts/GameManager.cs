@@ -18,6 +18,8 @@ public class GameManager : MonoBehaviour
     public FactionData playerFaction;
     public FactionData aiFaction;
     public FactionData ai2Faction;
+    public FactionData ai3Faction;
+    public FactionData ai4Faction;
     
     [SerializeField] private GameObject constructPrefab; // Prefab for constructs
     [SerializeField] private int constructs = 10; // Example limit for constructs
@@ -177,6 +179,11 @@ public class GameManager : MonoBehaviour
                 uiManager.ShowLosePanel();
                 currentState = GameState.Lost;
             }
+        }
+        else if (!playersLeft.Contains(playerFaction))
+        {
+            uiManager.ShowLosePanel();
+            currentState = GameState.Lost;
         }
     }
     

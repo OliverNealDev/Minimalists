@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: PlayerFactionData
   m_EditorClassIdentifier: 
   factionName: Player
-  factionColor: {r: 0.8773585, g: 0.43191808, b: 0.10346207, a: 1}
+  factionColor: {r: 0.10196076, g: 0.5087937, b: 0.8784314, a: 1}
   isPlayerControlled: 1

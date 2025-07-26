@@ -33,6 +33,11 @@ public class InputManager : MonoBehaviour
     
     public Slider UnitPercentBar;
     
+    private AudioSource audioSource;
+    [SerializeField] private AudioClip clickSound;
+    [SerializeField] private AudioClip sendSound;
+    
+    
     //public bool IsSelecting => startNode != null;
     
     public List<ConstructController> SelectedNodes { get; private set; } = new List<ConstructController>();
@@ -49,7 +54,9 @@ public class InputManager : MonoBehaviour
             Instance = this;
             DontDestroyOnLoad(gameObject);
         }
+        
         mainCamera = Camera.main;
+        audioSource = GetComponent<AudioSource>();
     }
     
     void Update()
@@ -174,6 +181,9 @@ public class InputManager : MonoBehaviour
                 SelectedNodes.Add(clickedNode);
                 clickedNode.visuals.UpdateHighlightColor(Color.white);
                 clickedNode.DisableHoverGlow();
+                
+                audioSource.pitch = Random.Range(0.9f, 1.1f);
+                audioSource.PlayOneShot(clickSound);
             }
         }
         else
@@ -200,6 +210,9 @@ public class InputManager : MonoBehaviour
 
             if (SelectedNodes.Count > 0)
             {
+                audioSource.pitch = Random.Range(0.9f, 1.1f);
+                audioSource.PlayOneShot(sendSound);
+                
                 foreach (ConstructController c in SelectedNodes)
                 {
                     if (c == clickedNode) continue;
