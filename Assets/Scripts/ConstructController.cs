@@ -502,13 +502,20 @@ public class ConstructController : MonoBehaviour
             {
                 unitController.Initialize(Owner, this, target, currentConstructData is HelipadData);
             }
-            
-            yield return new WaitForSeconds(spawnDelay);
+
+            if (currentConstructData is HelipadData)
+            {
+                yield return new WaitForSeconds(spawnDelay * 2f);
+            }
+            else
+            {
+                yield return new WaitForSeconds(spawnDelay);
+            }
         }
         
         targetConstructs.Remove(target);
     }
-    public void ReceiveUnit(FactionData unitOwner)
+    public void ReceiveUnit(FactionData unitOwner, bool isHelicopter)
     {
         if (unitOwner == Owner)
         {
@@ -516,11 +523,26 @@ public class ConstructController : MonoBehaviour
         }
         else
         {
-            UnitCount--;
+            if ((Owner != GameManager.Instance.unclaimedFaction && isHelicopter) || Owner == GameManager.Instance.unclaimedFaction && isHelicopter && UnitCount > 0 || !isHelicopter) UnitCount--;
             if (UnitCount < 0)
             {
-                Owner = unitOwner;
-                UnitCount = 1;
+                if (isHelicopter)
+                {
+                    Owner = GameManager.Instance.unclaimedFaction;
+                }
+                else
+                {
+                    Owner = unitOwner;
+                }
+
+                if (isHelicopter)
+                {
+                    UnitCount = 0;
+                }
+                else
+                {
+                    UnitCount = 1;
+                }
                 
                 audioSource.pitch = Random.Range(0.9f, 1.1f);
                 audioSource.PlayOneShot(upgradeSound);

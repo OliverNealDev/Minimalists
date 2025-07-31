@@ -299,7 +299,7 @@ public class UnitController : MonoBehaviour
     {
         if (target != null)
         {
-            target.ReceiveUnit(owner);
+            target.ReceiveUnit(owner, isHelicopter);
         }
         GameManager.Instance.unregisterUnit(this);
         Destroy(gameObject);
