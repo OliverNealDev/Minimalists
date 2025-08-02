@@ -14,4 +14,6 @@ public abstract class ConstructData : ScriptableObject
     public ConstructData downgradedVersion;
     public int conversionCost = 30;
     public float conversionTime = 3f;
+    public int maxUnitCapacity = 20;
+    public float unitsPerSecond = 0.5f;
 }

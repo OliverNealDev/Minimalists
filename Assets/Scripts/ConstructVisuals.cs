@@ -44,11 +44,11 @@ public class ConstructVisuals : MonoBehaviour
     private bool isHoverGlowing = false;
 
     [Header("Targeting")]
-    public float rotationSpeed = 5f; // How fast the turret turns. Adjust in the Inspector.
+    public float rotationSpeed = 5f;
 
     [Header("State (Read-Only)")]
     [Tooltip("Is the turret currently aimed at the target?")]
-    public bool isLockedOn = false; // Public bool to track lock-on state
+    public bool isLockedOn = false;
 
     private GameObject lastKnownTarget;
     public GameObject bulletSpawnPoint;
@@ -63,48 +63,26 @@ public class ConstructVisuals : MonoBehaviour
 
     void Update()
     {
-        // Check if we have a valid target from the controller
-        if (constructController.currentConstructData is TurretData && constructController.turretTarget != null)
+        bool hasValidTarget = constructController.currentConstructData is TurretData &&
+                              constructController.turretTarget != null &&
+                              constructController.turretTarget.activeInHierarchy;
+
+        if (hasValidTarget)
         {
-            // --- Rotation Logic ---
-
-            // 1. Get the direction vector from the turret to the target
             Vector3 direction = constructController.turretTarget.transform.position - turretGroup.transform.position;
-
-            // Optional: Uncomment the next line to keep the turret from tilting up or down
-            // direction.y = 0;
-
-            // 2. Calculate the target rotation
-            // We create a quaternion that "looks" in the calculated direction.
             Quaternion targetRotation = Quaternion.LookRotation(direction);
 
-            // 3. Smoothly rotate towards the target rotation using Slerp
-            // Slerp (Spherical Linear Interpolation) is perfect for smooth rotations.
             turretGroup.transform.rotation = Quaternion.Slerp(
                 turretGroup.transform.rotation,
                 targetRotation,
                 Time.deltaTime * rotationSpeed
             );
-
-            // --- Lock-On State Logic ---
-
-            // Calculate the angle between where the turret is currently facing and the direction to the target.
+            
             float angleToTarget = Vector3.Angle(turretGroup.transform.forward, direction);
-
-            // If the angle is very small, we consider the turret "locked on".
-            // You can adjust the threshold (e.g., 1.0f) to be more or less strict.
-            if (angleToTarget < 5.0f)
-            {
-                isLockedOn = true;
-            }
-            else
-            {
-                isLockedOn = false;
-            }
+            isLockedOn = angleToTarget < 5.0f;
         }
         else
         {
-            // If there is no target, it cannot be locked on.
             isLockedOn = false;
         }
     }
@@ -140,7 +118,6 @@ public class ConstructVisuals : MonoBehaviour
             }
             else
             {
-                // Check if the component exists before adding it
                 MeshRenderer renderer = child.GetComponent<MeshRenderer>();
                 if (renderer != null)
                 {
@@ -197,7 +174,7 @@ public class ConstructVisuals : MonoBehaviour
         
         if (gameObject.GetComponent<ConstructController>().Owner == GameManager.Instance.unclaimedFaction)
         {
-            turretRadiusLight.color = new Color(0.75f, 0.75f, 0.75f, 1f); // Grey color for unclaimed constructs
+            turretRadiusLight.color = new Color(0.75f, 0.75f, 0.75f, 1f);
         }
     }
     
@@ -257,11 +234,10 @@ public class ConstructVisuals : MonoBehaviour
     
     public void UpdateUnitCapacity(float current, ConstructData constructData)
     {
-        if (constructData is HouseData)
+        /*if (constructData is HouseData)
         {
             int max = ((HouseData)constructData).maxUnitCapacity;
             unitCapacitySlider.value = current / max;
-            //unitCapacityFillImage.gameObject.SetActive(max > 0);
             if (current == 0)
             {
                 unitCapacityFillImage.gameObject.SetActive(false);
@@ -280,13 +256,23 @@ public class ConstructVisuals : MonoBehaviour
         {
             unitCapacitySlider.value = 0;
             unitCapacityFillImage.gameObject.SetActive(false);
+        }*/
+        
+        int max = constructData.maxUnitCapacity;
+        unitCapacitySlider.value = current / max;
+        if (current == 0)
+        {
+            unitCapacityFillImage.gameObject.SetActive(false);
+        }
+        else
+        {
+            unitCapacityFillImage.gameObject.SetActive(true);
         }
     }
     
     public void HideVisuals()
     {
         unitCountText.enabled = false;
-        //selectionIndicator.SetActive(false);
         unitCapacitySlider.gameObject.SetActive(false);
     }
     
@@ -316,7 +302,7 @@ public class ConstructVisuals : MonoBehaviour
     
     public void ConstructChange(ConstructData constructData, bool isAnimated, Color newConstructColor)
     {
-        StopAllCoroutines(); // was in isUpgrading but house didnt visually upgrade once
+        StopAllCoroutines();
         calibrateVisuals();
         quickUpdateColor(newConstructColor);
         
@@ -364,7 +350,7 @@ public class ConstructVisuals : MonoBehaviour
             yield return null;
         }
         
-        float reformDuration = 0.4f; // previously 0.25f
+        float reformDuration = 0.4f;
         float shrinkTime = reformDuration / 2.0f;
         float growTime = reformDuration / 2.0f;
 
@@ -407,7 +393,7 @@ public class ConstructVisuals : MonoBehaviour
         float elapsedTime = 0f;
         float pulseFrequency = 1.0f;
         
-        float reformDuration = 0.4f; // previously 0.25f
+        float reformDuration = 0.4f;
         if (GameManager.Instance.isIdleScene) reformDuration *= 2f;
         float shrinkTime = reformDuration / 2.0f;
         float growTime = reformDuration / 2.0f;

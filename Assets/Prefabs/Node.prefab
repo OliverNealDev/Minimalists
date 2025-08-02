@@ -1590,7 +1590,7 @@ MonoBehaviour:
   house2Model: {fileID: 6278288050820673143, guid: 25b54005c06e0b14a91444cb70171703, type: 3}
   house3Model: {fileID: 5306549449812311771, guid: 11b0e736ac9cf924ea928869226af974, type: 3}
   house4Model: {fileID: 7017363657162972272, guid: 33bb5778e6486914eb59877801579121, type: 3}
-  rotationSpeed: 5
+  rotationSpeed: 6
   isLockedOn: 0
   bulletSpawnPoint: {fileID: 0}
 --- !u!65 &6182052860956765247

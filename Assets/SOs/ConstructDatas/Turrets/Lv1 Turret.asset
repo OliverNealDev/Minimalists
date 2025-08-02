@@ -20,6 +20,8 @@ MonoBehaviour:
   downgradedVersion: {fileID: 0}
   conversionCost: 10
   conversionTime: 8
-  fireRate: 1
+  maxUnitCapacity: 5
+  unitsPerSecond: 0.25
+  fireRate: 2.6
   range: 2.3
   projectilePrefab: {fileID: 919275896509536386, guid: c8c1f2acc9e9b744dbeb9e6774fad8fe, type: 3}

@@ -20,3 +20,5 @@ MonoBehaviour:
   downgradedVersion: {fileID: 0}
   conversionCost: 10
   conversionTime: 8
+  maxUnitCapacity: 20
+  unitsPerSecond: 0.625

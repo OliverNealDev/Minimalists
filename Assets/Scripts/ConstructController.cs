@@ -251,22 +251,20 @@ public class ConstructController : MonoBehaviour
             UnitCount += 100;
         }
         
-        if (currentConstructData is HouseData houseData)
+        if (UnitCount < currentConstructData.maxUnitCapacity)
         {
-            if (UnitCount < houseData.maxUnitCapacity)
+            if (!GameManager.Instance.IsPopulationCapFull(Owner)) unitGenerationBuffer += currentConstructData.unitsPerSecond * Time.deltaTime;
+            if (unitGenerationBuffer >= 1f)
             {
-                if (!GameManager.Instance.IsPopulationCapFull(Owner)) unitGenerationBuffer += houseData.unitsPerSecond * Time.deltaTime;
-                if (unitGenerationBuffer >= 1f)
-                {
-                    int wholeUnits = Mathf.FloorToInt(unitGenerationBuffer);
-                    UnitCount += wholeUnits;
-                    visuals.UpdateUnitCapacity(UnitCount, currentConstructData);
-                    checkUpgradeIndicator();
-                    unitGenerationBuffer -= wholeUnits;
-                }
+                int wholeUnits = Mathf.FloorToInt(unitGenerationBuffer);
+                UnitCount += wholeUnits;
+                visuals.UpdateUnitCapacity(UnitCount, currentConstructData);
+                checkUpgradeIndicator();
+                unitGenerationBuffer -= wholeUnits;
             }
         }
-        else if (currentConstructData is TurretData turretData)
+        
+        if (currentConstructData is TurretData turretData)
         {
             shootCooldownBuffer -= Time.deltaTime;
             if (shootCooldownBuffer <= 0f && visuals.isLockedOn)
@@ -503,14 +501,15 @@ public class ConstructController : MonoBehaviour
                 unitController.Initialize(Owner, this, target, currentConstructData is HelipadData);
             }
 
-            if (currentConstructData is HelipadData)
+            /*if (currentConstructData is HelipadData)
             {
                 yield return new WaitForSeconds(spawnDelay * 2f);
             }
             else
             {
                 yield return new WaitForSeconds(spawnDelay);
-            }
+            }*/
+            yield return new WaitForSeconds(spawnDelay);
         }
         
         targetConstructs.Remove(target);
@@ -523,26 +522,29 @@ public class ConstructController : MonoBehaviour
         }
         else
         {
-            if ((Owner != GameManager.Instance.unclaimedFaction && isHelicopter) || Owner == GameManager.Instance.unclaimedFaction && isHelicopter && UnitCount > 0 || !isHelicopter) UnitCount--;
+            //if ((Owner != GameManager.Instance.unclaimedFaction && isHelicopter) || Owner == GameManager.Instance.unclaimedFaction && isHelicopter && UnitCount > 0 || !isHelicopter) 
+            UnitCount--;
             if (UnitCount < 0)
             {
-                if (isHelicopter)
+                /*if (isHelicopter)
                 {
                     Owner = GameManager.Instance.unclaimedFaction;
                 }
                 else
                 {
                     Owner = unitOwner;
-                }
+                }*/
+                Owner = unitOwner;
 
-                if (isHelicopter)
+                /*if (isHelicopter)
                 {
                     UnitCount = 0;
                 }
                 else
                 {
                     UnitCount = 1;
-                }
+                }*/
+                UnitCount = 1;
                 
                 audioSource.pitch = Random.Range(0.9f, 1.1f);
                 audioSource.PlayOneShot(upgradeSound);
