@@ -501,15 +501,15 @@ public class ConstructController : MonoBehaviour
                 unitController.Initialize(Owner, this, target, currentConstructData is HelipadData);
             }
 
-            /*if (currentConstructData is HelipadData)
+            if (currentConstructData is HelipadData)
             {
-                yield return new WaitForSeconds(spawnDelay * 2f);
+                yield return new WaitForSeconds(spawnDelay * 1.5f);
             }
             else
             {
                 yield return new WaitForSeconds(spawnDelay);
-            }*/
-            yield return new WaitForSeconds(spawnDelay);
+            }
+            //yield return new WaitForSeconds(spawnDelay);
         }
         
         targetConstructs.Remove(target);
