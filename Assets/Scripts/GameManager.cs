@@ -35,6 +35,7 @@ public class GameManager : MonoBehaviour
     }
     void Start()
     {
+        //Time.timeScale = 10;
         uiManager = FindFirstObjectByType<UIManager>();
         allConstructs = FindObjectsByType<ConstructController>(FindObjectsSortMode.None).ToList();
         
@@ -61,7 +62,7 @@ public class GameManager : MonoBehaviour
         
         if (currentState == GameState.Playing)
         {
-            CheckWinCondition();
+            //CheckWinCondition();
         }
         
         if (Input.GetKeyDown(KeyCode.Escape))
@@ -77,6 +78,15 @@ public class GameManager : MonoBehaviour
                 uiManager.ShowPausePanel(false);
                 uiManager.ResumeGame();
             }
+        }
+
+        if (Input.GetKeyDown(KeyCode.Y))
+        {
+            Time.timeScale--;
+        }
+        if (Input.GetKeyDown(KeyCode.U))
+        {
+            Time.timeScale++;
         }
     }
     

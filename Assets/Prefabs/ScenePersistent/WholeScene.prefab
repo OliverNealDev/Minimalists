@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9147823606814413045}
   - component: {fileID: 8289294850891982675}
+  - component: {fileID: 9172571101489994186}
   m_Layer: 0
   m_Name: AI3Manager
   m_TagString: Untagged
@@ -39,13 +40,25 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1747512243413707734}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: accf601b5175887458042c7d42e85d93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   aiFaction: {fileID: 11400000, guid: 4147a70cc4d22ba429475b8071db7a51, type: 2}
-  difficulty: {fileID: 11400000, guid: 133a9ca9087af1a44b9e1a5c63d92a98, type: 2}
+--- !u!114 &9172571101489994186
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1747512243413707734}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac2474bb432d6ae4a8b362f0e19c8304, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  aiFaction: {fileID: 11400000, guid: 4147a70cc4d22ba429475b8071db7a51, type: 2}
 --- !u!1 &2555280952065081060
 GameObject:
   m_ObjectHideFlags: 0
@@ -506,6 +519,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5716940795318142883}
   - component: {fileID: 6336322957265802101}
+  - component: {fileID: 5932699631341333008}
   m_Layer: 0
   m_Name: AIManager
   m_TagString: Untagged
@@ -535,13 +549,25 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8329348918822592455}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: accf601b5175887458042c7d42e85d93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   aiFaction: {fileID: 11400000, guid: 810f9136a57c4dc44a024e0cb3fc8b74, type: 2}
-  difficulty: {fileID: 11400000, guid: 133a9ca9087af1a44b9e1a5c63d92a98, type: 2}
+--- !u!114 &5932699631341333008
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8329348918822592455}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac2474bb432d6ae4a8b362f0e19c8304, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  aiFaction: {fileID: 11400000, guid: 810f9136a57c4dc44a024e0cb3fc8b74, type: 2}
 --- !u!1 &8353369549662223641
 GameObject:
   m_ObjectHideFlags: 0
@@ -552,6 +578,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4850036981175884119}
   - component: {fileID: 577056279958814477}
+  - component: {fileID: 3407885590376390002}
   m_Layer: 0
   m_Name: AI2Manager
   m_TagString: Untagged
@@ -581,13 +608,25 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8353369549662223641}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: accf601b5175887458042c7d42e85d93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   aiFaction: {fileID: 11400000, guid: eb8bab1036b44474596174f544138d87, type: 2}
-  difficulty: {fileID: 11400000, guid: 133a9ca9087af1a44b9e1a5c63d92a98, type: 2}
+--- !u!114 &3407885590376390002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8353369549662223641}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac2474bb432d6ae4a8b362f0e19c8304, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  aiFaction: {fileID: 11400000, guid: eb8bab1036b44474596174f544138d87, type: 2}
 --- !u!1 &8737863276374952535
 GameObject:
   m_ObjectHideFlags: 0
@@ -598,6 +637,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7861171481014058292}
   - component: {fileID: 3199689983949513471}
+  - component: {fileID: 6613971179364688110}
   m_Layer: 0
   m_Name: AI4Manager
   m_TagString: Untagged
@@ -627,13 +667,25 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8737863276374952535}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: accf601b5175887458042c7d42e85d93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   aiFaction: {fileID: 11400000, guid: 6a816f33f9eaf3246bbdddd07c886ab7, type: 2}
-  difficulty: {fileID: 11400000, guid: 133a9ca9087af1a44b9e1a5c63d92a98, type: 2}
+--- !u!114 &6613971179364688110
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8737863276374952535}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac2474bb432d6ae4a8b362f0e19c8304, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  aiFaction: {fileID: 11400000, guid: 6a816f33f9eaf3246bbdddd07c886ab7, type: 2}
 --- !u!1 &9021191791079684400
 GameObject:
   m_ObjectHideFlags: 0

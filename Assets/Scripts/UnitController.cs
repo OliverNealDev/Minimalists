@@ -8,7 +8,7 @@ using Unity.VisualScripting;
 public class UnitController : MonoBehaviour
 {
     public FactionData owner { get; private set; }
-    private ConstructController target;
+    public ConstructController target { get; private set; }
     private ConstructController spawnConstruct;
     private NavMeshAgent navMeshAgent;
     private bool isJumping = false;
@@ -107,6 +107,25 @@ public class UnitController : MonoBehaviour
                 renderer.material.color = owner.factionColor;
             }
         }
+
+        /*if (isHelicopter)
+        {
+            float randomX = Random.Range(-0.0075f, 0.0075f);
+            float randomZ = Random.Range(-0.0075f, 0.0075f);
+            for (int i = 0; i < transform.transform.GetChild(1).childCount; i++)
+            {
+                transform.GetChild(1).GetChild(i).transform.position += new Vector3(randomX, 0, randomZ);
+            }
+        }
+        else
+        {
+            float randomX = Random.Range(-0.0075f, 0.0075f);
+            float randomZ = Random.Range(-0.0075f, 0.0075f);
+            for (int i = 0; i < transform.transform.GetChild(0).childCount; i++)
+            {
+                transform.GetChild(0).GetChild(i).transform.position += new Vector3(randomX, 0, randomZ);
+            }
+        }*/
     }
     void Update()
     {
