@@ -66,7 +66,7 @@ MeshRenderer:
   m_RenderingLayerMask: 2
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 1cdabbb32dc50454aa3b3317a5d0b731, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -442,7 +442,7 @@ MeshRenderer:
   m_RenderingLayerMask: 2
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 1cdabbb32dc50454aa3b3317a5d0b731, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -549,7 +549,7 @@ MeshRenderer:
   m_RenderingLayerMask: 2
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 1cdabbb32dc50454aa3b3317a5d0b731, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -685,7 +685,7 @@ MeshRenderer:
   m_RenderingLayerMask: 2
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 1cdabbb32dc50454aa3b3317a5d0b731, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -736,6 +736,30 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4727606930477447552}
     m_Modifications:
+    - target: {fileID: 1143720996280667089, guid: d7af41b4daa16884186b2ab13dd16a37, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 1cdabbb32dc50454aa3b3317a5d0b731, type: 2}
+    - target: {fileID: 1566062758410185479, guid: d7af41b4daa16884186b2ab13dd16a37, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 1cdabbb32dc50454aa3b3317a5d0b731, type: 2}
+    - target: {fileID: 1939979230990114474, guid: d7af41b4daa16884186b2ab13dd16a37, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 1cdabbb32dc50454aa3b3317a5d0b731, type: 2}
+    - target: {fileID: 2912184251534672799, guid: d7af41b4daa16884186b2ab13dd16a37, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 1cdabbb32dc50454aa3b3317a5d0b731, type: 2}
+    - target: {fileID: 3739090698576737329, guid: d7af41b4daa16884186b2ab13dd16a37, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 1cdabbb32dc50454aa3b3317a5d0b731, type: 2}
+    - target: {fileID: 5051531600943100697, guid: d7af41b4daa16884186b2ab13dd16a37, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 1cdabbb32dc50454aa3b3317a5d0b731, type: 2}
     - target: {fileID: 6437384154732669924, guid: d7af41b4daa16884186b2ab13dd16a37, type: 3}
       propertyPath: m_Name
       value: Air

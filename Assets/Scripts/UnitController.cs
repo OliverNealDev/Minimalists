@@ -87,7 +87,7 @@ public class UnitController : MonoBehaviour
             // Apply faction color to the helicopter model
             foreach (MeshRenderer renderer in transform.GetChild(1).GetComponentsInChildren<MeshRenderer>())
             {
-                renderer.material.color = owner.factionColor;
+                renderer.material.SetColor("_BaseColor", owner.factionColor);
             }
         }
         else
@@ -104,7 +104,7 @@ public class UnitController : MonoBehaviour
             // Apply faction color to the ground unit model
             foreach (MeshRenderer renderer in transform.GetChild(0).GetComponentsInChildren<MeshRenderer>())
             {
-                renderer.material.color = owner.factionColor;
+                renderer.material.SetColor("_BaseColor", owner.factionColor);
             }
         }
 
