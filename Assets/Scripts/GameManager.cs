@@ -62,7 +62,7 @@ public class GameManager : MonoBehaviour
         
         if (currentState == GameState.Playing)
         {
-            //CheckWinCondition();
+            CheckWinCondition();
         }
         
         if (Input.GetKeyDown(KeyCode.Escape))

@@ -679,7 +679,7 @@ public class ConstructController : MonoBehaviour
     
     private void UpdateVisualsForOwner()
     {
-        if (Owner.factionName == "Player" || Owner.factionName == "Unclaimed")
+        if ((Owner.factionName == "Player" || Owner.factionName == "Unclaimed") || false)
         {
             visuals.ShowVisuals();
             //if (isMouseOver) visuals.UpdateHighlightColor(Color.grey);

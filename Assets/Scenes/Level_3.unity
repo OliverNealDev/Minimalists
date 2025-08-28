@@ -9806,15 +9806,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4084021646600848321, guid: 4881e8c2247fa15478f92f5c15f83edb, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4084021646600848321, guid: 4881e8c2247fa15478f92f5c15f83edb, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4084021646600848321, guid: 4881e8c2247fa15478f92f5c15f83edb, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6336322957265802101, guid: 4881e8c2247fa15478f92f5c15f83edb, type: 3}
       propertyPath: m_Enabled

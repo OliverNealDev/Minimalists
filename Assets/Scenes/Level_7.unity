@@ -180,6 +180,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4622470153688432647, guid: 6e96fb6bb887e804ab55538b02703fef, type: 3}
+      propertyPath: initialConstructType
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4622470153688432647, guid: 6e96fb6bb887e804ab55538b02703fef, type: 3}
       propertyPath: initialUnitCapacityType
       value: 0
       objectReference: {fileID: 0}
@@ -21972,7 +21976,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4622470153688432647, guid: 6e96fb6bb887e804ab55538b02703fef, type: 3}
       propertyPath: initialOwner
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4622470153688432647, guid: 6e96fb6bb887e804ab55538b02703fef, type: 3}
       propertyPath: initialConstructType
@@ -52242,6 +52246,10 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1304291853612908691, guid: 4881e8c2247fa15478f92f5c15f83edb, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1549661753927326082, guid: 4881e8c2247fa15478f92f5c15f83edb, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -52301,6 +52309,18 @@ PrefabInstance:
     - target: {fileID: 3265284574784910551, guid: 4881e8c2247fa15478f92f5c15f83edb, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4084021646600848321, guid: 4881e8c2247fa15478f92f5c15f83edb, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4084021646600848321, guid: 4881e8c2247fa15478f92f5c15f83edb, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4084021646600848321, guid: 4881e8c2247fa15478f92f5c15f83edb, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6336322957265802101, guid: 4881e8c2247fa15478f92f5c15f83edb, type: 3}
       propertyPath: m_Enabled
