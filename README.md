@@ -1,4 +1,3 @@
-@ -0,0 +1,110 @@
 # Minimalists
 
 A 3D real-time strategy game stripped to its essentials: capture structures, commit forces by percentage, and outthink AI opponents in anything from a duel to a four-way free-for-all.
